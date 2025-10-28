@@ -4,17 +4,41 @@
  */
 package Main;
 
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 /**
  *
  * @author BENJAMIN
  */
-public class main {
+public class main extends Application{
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        try {
+            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/LoginView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainView.fxml"));
+            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/RegisterView.fxml"));
+            Parent root = loader.load();
+            
+            Scene scene = new Scene(root, 800, 600);
+            //scene.getStylesheets().add(getClass().getResource("/View/css/loginview.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/View/css/mainview.css").toExternalForm());
+            //scene.getStylesheets().add(getClass().getResource("/View/css/registerview.css").toExternalForm());
+            
+            primaryStage.setTitle("Registro");
+            primaryStage.setMaximized(true);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
