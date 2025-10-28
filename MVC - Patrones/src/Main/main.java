@@ -3,18 +3,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package Main;
-
+import modelo.*;
 /**
  *
  * @author BENJAMIN
  */
 public class main {
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+        fileManager fm = new fileManager();
+        System.out.println("Tareas cargadas desde archivo:");
+        fm.loadTasks().forEach(System.out::println);
     }
     
 }
