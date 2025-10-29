@@ -4,6 +4,8 @@
  */
 package Controller;
 
+import Model.ObserverLog;
+import Model.SubjectLog;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -12,7 +14,7 @@ import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class MainViewController {
+public class MainViewController implements ObserverLog{
     
     @FXML private TextField inputField;
     @FXML private Button addButton;
@@ -20,6 +22,17 @@ public class MainViewController {
     @FXML private Label statsLabel;
     @FXML private VBox emptyStateBox;
     
+    private SubjectLog sujeto;
+
+    @Override
+    public void inicioSesion(String id) {
+        //cargar las tareas
+    }
+
+    @Override
+    public void registroExitoso(String id) {
+        //guardar la informacion en archivos
+    }
     
     
 

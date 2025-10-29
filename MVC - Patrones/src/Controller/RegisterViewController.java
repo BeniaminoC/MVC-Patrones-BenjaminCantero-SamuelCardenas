@@ -4,12 +4,16 @@
  */
 package Controller;
 
+import Model.SubjectLog;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.animation.FadeTransition;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.util.Duration;
 
 /**
@@ -27,9 +31,11 @@ public class RegisterViewController {
     @FXML private Button registerButton;
     @FXML private Label messageLabel;
     @FXML private Hyperlink loginLink;
+    private SubjectLog subject;
     
     @FXML
     public void initialize() {
+        subject=SubjectLog.getInstance();
         // Ocultar mensaje al inicio
         messageLabel.setVisible(false);
         
@@ -72,6 +78,23 @@ public class RegisterViewController {
             return;
         }
         
+        showSuccess("Creando cuenta...");
+        try {
+            // Cargar la ventana de registro
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainView.fxml"));
+            Parent root = loader.load();
+            
+            Scene scene = registerButton.getScene();
+            scene.setRoot(root);
+            
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(getClass().getResource("/View/css/mainview.css").toExternalForm());
+            subject.notificarInicioSesion(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error al cargar la ventana de registro");
+        }
+        
 
     }
     
@@ -79,6 +102,21 @@ public class RegisterViewController {
     private void handleBackToLogin() {
         // Aquí cargarías la ventana de login
         showInfo("Volviendo al inicio de sesión...");
+        try {
+            // Cargar la ventana de registro
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/LoginView.fxml"));
+            Parent root = loader.load();
+            
+            Scene scene = registerButton.getScene();
+            scene.setRoot(root);
+            
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(getClass().getResource("/View/css/loginview.css").toExternalForm());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error al cargar la ventana de registro");
+        }
     }
     
     private void showError(String message) {
