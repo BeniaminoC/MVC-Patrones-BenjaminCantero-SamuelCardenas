@@ -1,0 +1,139 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+.mainFxmlClass {
+/* Root Container */
+.root-container {
+    -fx-background-color: white;
+}
+
+/* Panel Izquierdo */
+.left-panel {
+    -fx-background-color: linear-gradient(to bottom right, #4f46e5, #6366f1);
+    -fx-min-width: 400px;
+}
+
+.welcome-title {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.welcome-subtitle {
+    -fx-font-size: 24px;
+    -fx-text-fill: rgba(255, 255, 255, 0.9);
+    -fx-padding: 10 0 0 0;
+}
+
+.welcome-description {
+    -fx-font-size: 16px;
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+    -fx-text-alignment: center;
+}
+
+/* Panel Derecho */
+.right-panel {
+    -fx-background-color: #fafafa;
+}
+
+/* Formulario */
+.form-container {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 20, 0, 0, 5);
+    -fx-padding: 20 40 20 40;
+}
+
+.form-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+}
+
+.form-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6b7280;
+}
+
+/* Campos de texto */
+.field-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+.input-field {
+    -fx-pref-height: 45px;
+    -fx-background-radius: 10;
+    -fx-border-color: #e5e7eb;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+    -fx-padding: 12;
+    -fx-font-size: 14px;
+}
+
+.input-field:focused {
+    -fx-border-color: #4f46e5;
+    -fx-background-color: #fafafa;
+}
+
+/* Mensaje */
+.message-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10;
+    -fx-background-color: #fef2f2;
+    -fx-background-radius: 8;
+    -fx-text-alignment: center;
+}
+
+/* Links */
+.link-primary {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4f46e5;
+    -fx-font-weight: bold;
+    -fx-underline: false;
+}
+
+.link-primary:hover {
+    -fx-text-fill: #4338ca;
+    -fx-underline: true;
+}
+
+/* Botón Registro */
+.register-button {
+    -fx-background-color: #4f46e5;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 15 30;
+    -fx-cursor: hand;
+    -fx-pref-height: 50px;
+}
+
+.register-button:hover {
+    -fx-background-color: #4338ca;
+    -fx-effect: dropshadow(gaussian, rgba(79, 70, 229, 0.4), 15, 0, 0, 5);
+}
+
+.register-button:pressed {
+    -fx-background-color: #3730a3;
+}
+
+/* Separador */
+.separator {
+    -fx-background-color: #e5e7eb;
+}
+
+.separator-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #9ca3af;
+}
+
+.login-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6b7280;
+}
+}
