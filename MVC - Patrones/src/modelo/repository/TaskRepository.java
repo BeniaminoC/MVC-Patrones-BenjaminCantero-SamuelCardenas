@@ -3,14 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package modelo.repository;
-/**
- *
- * @author samue
- */
+
 import modelo.entity.Task;
 import modelo.persistence.FileManager;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class TaskRepository {
 
@@ -72,5 +71,29 @@ public class TaskRepository {
     public void clearAll() {
         tareas.clear();
         fileManager.saveTasks(tareas);
+    }
+
+    public Optional<Task> findByTitulo(String titulo) {
+        return tareas.stream()
+                .filter(task -> task.getTitulo().equals(titulo))
+                .findFirst();
+    }
+
+    public List<Task> findPendientes() {
+        return tareas.stream()
+                .filter(task -> !task.isCompletada())
+                .collect(Collectors.toList());
+    }
+
+    public List<Task> findCompletadas() {
+        return tareas.stream()
+                .filter(Task::isCompletada)
+                .collect(Collectors.toList());
+    }
+
+    public List<Task> findByUsuario(String username) {
+        return tareas.stream()
+                .filter(task -> username.equals(task.getUsuarioAsignado()))
+                .collect(Collectors.toList());
     }
 }

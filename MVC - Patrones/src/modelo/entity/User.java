@@ -3,12 +3,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package modelo.entity;
-import javafx.beans.property.*;
 
-/**
- *
- * @author samue
- */
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class User {
 
     private final StringProperty nombreUsuario;
@@ -32,7 +30,7 @@ public class User {
         return nombreUsuario;
     }
 
-    public String getContrauser() {
+    public String getContraUser() { // Cambiado de getContrauser a getContraUser
         return contraUser.get();
     }
 
@@ -40,14 +38,14 @@ public class User {
         contraUser.set(value);
     }
 
-    public StringProperty setContraUseroProperty() {
+    public StringProperty contraUserProperty() { // Corregido el nombre
         return contraUser;
     }
 
     //  Serialización simple
     @Override
     public String toString() {
-        return String.join(";", getNombreUsuario(), getContrauser());
+        return String.join(";", getNombreUsuario(), getContraUser());
     }
 
     public static User fromString(String linea) {
