@@ -4,6 +4,7 @@
  */
 package Main;
 
+import Controller.NavigationManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,25 +15,14 @@ import javafx.stage.Stage;
  *
  * @author BENJAMIN
  */
-public class main extends Application{
+public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        NavigationManager navegador = NavigationManager.getInstance();
+        navegador.setPrimaryStage(primaryStage);
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/LoginView.fxml"));
-            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainView.fxml"));
-            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/RegisterView.fxml"));
-            Parent root = loader.load();
-            
-            Scene scene = new Scene(root, 800, 600);
-            scene.getStylesheets().add(getClass().getResource("/View/css/loginview.css").toExternalForm());
-            //scene.getStylesheets().add(getClass().getResource("/View/css/mainview.css").toExternalForm());
-            //scene.getStylesheets().add(getClass().getResource("/View/css/registerview.css").toExternalForm());
-            
-            primaryStage.setTitle("Registro");
-            primaryStage.setMaximized(true);
-            primaryStage.setScene(scene);
-            primaryStage.show();
+           navegador.navigateFromStart("/View/LoginView.fxml", "/View/css/loginview.css");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -27,25 +27,25 @@ public class SubjectLog{
         }
         return instance;
     }
-    public void agregarObservador(ObserverLog o){
+    public void addObserver(ObserverLog o){
         if (!observers.contains(o)) {
             observers.add(o);
         }
     }
-    public void eliminarObservador(ObserverLog o){
+    public void deleteObserver(ObserverLog o){
         observers.remove(o);
     }
-    public void notificarInicioSesion(String userid){
+    public void notifyLogin(String userid){
         this.currentUser = userid;
         for (ObserverLog observer : observers) {
-            observer.inicioSesion(userid);
+            observer.loginSuccess(userid);
         }
     }
     
-    public void notificarRegistroExitoso(String userid){
+    public void notifyRegister(String userid){
         this.currentUser = userid;
         for (ObserverLog observer : observers) {
-            observer.registroExitoso(userid);
+            observer.registerSuccess(userid);
         }
     }
     

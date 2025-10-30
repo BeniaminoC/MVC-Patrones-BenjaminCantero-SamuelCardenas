@@ -9,6 +9,6 @@ package Model;
  * @author BENJAMIN
  */
 public interface ObserverLog{
-    public void inicioSesion(String id);
-    public void registroExitoso(String id);
+    public void loginSuccess(String id);
+    public void registerSuccess(String id);
 }

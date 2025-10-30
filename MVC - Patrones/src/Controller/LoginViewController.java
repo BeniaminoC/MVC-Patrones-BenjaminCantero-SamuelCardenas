@@ -24,10 +24,12 @@ public class LoginViewController{
     @FXML private Label errorLabel;
     @FXML private Hyperlink registerLink;
     private SubjectLog subject;
+    private NavigationManager navegador;
     
     @FXML
     public void initialize() {
         subject=SubjectLog.getInstance();
+        navegador = NavigationManager.getInstance();
         
         // Ocultar mensaje de error al inicio
         errorLabel.setVisible(false);
@@ -52,21 +54,10 @@ public class LoginViewController{
         // Prueba
         if (username.equals("admin") && password.equals("1234")) {
             showSuccess("¡Inicio de sesión exitoso!");
-            //siguiente ventana (TaskManager)
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainView.fxml"));
-                Parent root = loader.load();
-
-                Scene scene = loginButton.getScene();
-                scene.setRoot(root);
-
-                scene.getStylesheets().clear();
-                scene.getStylesheets().add(getClass().getResource("/View/css/mainview.css").toExternalForm());
-                subject.notificarInicioSesion(username);
-            } catch (Exception e) {
-                e.printStackTrace();
-                showError("Error al cargar la ventana de registro");
-            }
+            
+            javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(event -> navegador.navigateByRoot(loginButton, "/View/MainView.fxml", "/View/css/mainview.css"));
+            pause.play();
         } else {
             showError("Usuario o contraseña incorrectos");
         }
@@ -77,22 +68,10 @@ public class LoginViewController{
     
     @FXML
     private void handleRegister() {
-        showInfo("Funcionalidad de registro");
-        try {
-            // Cargar la ventana de registro
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/RegisterView.fxml"));
-            Parent root = loader.load();
-            
-            Scene scene = loginButton.getScene();
-            scene.setRoot(root);
-            
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(getClass().getResource("/View/css/RegisterView.css").toExternalForm());
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Error al cargar la ventana de registro");
-        }
+        showInfo("Abriendo formulario de registro...");
+        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(event -> navegador.navigateByRoot(loginButton, "/View/RegisterView.fxml", "/View/css/registerview.css"));
+            pause.play();
     }
     
     private void showError(String message) {
@@ -122,4 +101,5 @@ public class LoginViewController{
         fadeIn.setToValue(1);
         fadeIn.play();
     }
+    
 }
