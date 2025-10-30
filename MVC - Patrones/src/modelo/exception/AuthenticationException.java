@@ -4,12 +4,10 @@
  */
 package modelo.exception;
 
-public class ModelException extends Exception {
-    public ModelException(String message) {
-        super(message);
-    }
+/**
+ *
+ * @author samue
+ */
+public class AuthenticationException {
     
-    public ModelException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }
