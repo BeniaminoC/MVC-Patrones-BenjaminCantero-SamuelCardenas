@@ -13,7 +13,7 @@ import javafx.scene.layout.HBox;
  * @author BENJAMIN
  */
 public class StyleTaskPresentation {
-   public void updateTaskBackground(HBox taskItem, TaskUI task, boolean completed) {
+   public void updateTaskBackground(HBox taskItem, Task task, boolean completed) {
     String baseColor = task.getPriorityBackgroundColor();
     String opacity = completed ? "0.3" : "1.0";
     
@@ -26,7 +26,7 @@ public class StyleTaskPresentation {
     );
     }
     
-    public void updateTaskStyle(HBox taskItem, boolean completed, TaskUI task) {
+    public void updateTaskStyle(HBox taskItem, boolean completed, Task task) {
         // Actualizar fondo con opacidad
         updateTaskBackground(taskItem, task, completed);
         
