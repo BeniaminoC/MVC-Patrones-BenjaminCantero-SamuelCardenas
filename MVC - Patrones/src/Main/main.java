@@ -4,9 +4,9 @@
  */
 package Main;
 
+import Controller.NavigationManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import controller.NavigationManager;
 
 /**
  * Clase principal de la aplicación

@@ -4,9 +4,10 @@
  */
 package modelo.observer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import modelo.entity.User;
 
 /**
  * Subject para notificar eventos de autenticación
@@ -39,31 +40,31 @@ public class AuthSubject {
         observers.remove(observer);
     }
 
-    public void notifyLogin(String userId, String username) {
-        this.currentUserId = userId;
-        this.currentUsername = username;
+    public void notifyLogin(User user) {
+        this.currentUserId = user.getId();
+        this.currentUsername = user.getNombreUsuario();
         
         for (AuthObserver observer : observers) {
-            observer.onLoginSuccess(userId, username);
+            observer.onLoginSuccess(user);
         }
     }
 
-    public void notifyRegister(String userId, String username) {
-        this.currentUserId = userId;
-        this.currentUsername = username;
+    public void notifyRegister(User user) {
+        this.currentUserId = user.getId();
+        this.currentUsername = user.getNombreUsuario();
         
         for (AuthObserver observer : observers) {
-            observer.onRegisterSuccess(userId, username);
+            observer.onRegisterSuccess(user);
         }
     }
 
-    public void notifyLogout() {
+    public void notifyLogout(User user) {
         String userId = this.currentUserId;
         this.currentUserId = null;
         this.currentUsername = null;
         
         for (AuthObserver observer : observers) {
-            observer.onLogout(userId);
+            observer.onLogout(user);
         }
     }
 

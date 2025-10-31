@@ -4,9 +4,11 @@
  */
 package modelo.repository;
 
+import java.util.*;
+
 import modelo.entity.User;
 import modelo.persistence.FileManager;
-import java.util.*;
+
 
 /**
  * Repositorio de usuarios

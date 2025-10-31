@@ -4,12 +4,13 @@
  */
 package modelo.service;
 
-import modelo.entity.Task;
-import modelo.exception.*;
-import modelo.repository.TaskRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import modelo.entity.Task;
+import modelo.exception.*;
+import modelo.repository.TaskRepository;
 
 /**
  * Servicio de tareas con validaciones
@@ -65,7 +66,7 @@ public class TaskService {
         task.setCompletada(completada);
         repository.update(task);
     }
-
+    
     public List<Task> obtenerTareasUsuario(String username) {
         return repository.findByUsuario(username);
     }

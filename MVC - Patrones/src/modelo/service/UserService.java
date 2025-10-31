@@ -5,11 +5,12 @@
 
 package modelo.service;
 
+import java.util.Optional;
+import java.util.regex.Pattern;
+
 import modelo.entity.User;
 import modelo.exception.*;
 import modelo.repository.UserRepository;
-import java.util.Optional;
-import java.util.regex.Pattern;
 
 /**
  * Servicio de usuarios con autenticación
@@ -24,13 +25,13 @@ public class UserService {
         this.repository = UserRepository.getInstance();
     }
 
-    public User registrarUsuario(String username, String email, String password) 
+    public User registrarUsuario(String username, String email, String password, String confirmPassword) 
             throws ValidationException, ExistingUserException {
         
         // Validaciones
         validarUsername(username);
         validarEmail(email);
-        validarPassword(password);
+        validarPassword(password, confirmPassword);
 
         // Verificar duplicados
         if (repository.findByUsername(username).isPresent()) {
@@ -64,16 +65,6 @@ public class UserService {
         return user;
     }
 
-    public void cambiarPassword(String username, String oldPassword, String newPassword) 
-            throws AuthenticationException, ValidationException {
-        
-        User user = autenticarUsuario(username, oldPassword);
-        validarPassword(newPassword);
-        
-        user.cambiarPassword(newPassword);
-        repository.update(user);
-    }
-
     private void validarUsername(String username) throws ValidationException {
         if (username == null || username.trim().isEmpty()) {
             throw new ValidationException("El nombre de usuario no puede estar vacío");
@@ -98,7 +89,7 @@ public class UserService {
         }
     }
 
-    private void validarPassword(String password) throws ValidationException {
+    private void validarPassword(String password, String confirmPassword) throws ValidationException {
         if (password == null || password.isEmpty()) {
             throw new ValidationException("La contraseña no puede estar vacía");
         }
@@ -107,6 +98,9 @@ public class UserService {
         }
         if (password.length() > 50) {
             throw new ValidationException("La contraseña no puede exceder 50 caracteres");
+        }
+        if (!password.equals(confirmPassword)) {
+            throw new ValidationException("Las contraseñas no coinciden");
         }
     }
 

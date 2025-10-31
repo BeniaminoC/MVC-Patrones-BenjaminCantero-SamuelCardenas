@@ -2,181 +2,190 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
  */
-package controller;
+package Controller;
+
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import Controller.NavigationManager;
 import modelo.entity.User;
-import modelo.service.UserService;
-import modelo.observer.AuthSubject;
 import modelo.exception.AuthenticationException;
+import modelo.observer.AuthSubject;
+import modelo.service.UserService;
 
 /**
- * Controlador de Login mejorado
+ * Controlador para la vista de inicio de sesión (LoginView.fxml).
+ * 
+ * Gestiona la autenticación del usuario y la navegación hacia la ventana principal o de registro.
+ * Implementa la lógica de interacción entre la vista (JavaFX) y los servicios de autenticación del modelo.
  */
 public class LoginViewController {
-    
+
+    /** Campo de texto para el nombre de usuario. */
     @FXML private TextField usernameField;
+
+    /** Campo de texto para la contraseña del usuario. */
     @FXML private PasswordField passwordField;
+
+    /** Botón que ejecuta el proceso de inicio de sesión. */
     @FXML private Button loginButton;
-    @FXML private Label messageLabel;
+
+    /** Etiqueta para mostrar mensajes de error, éxito o información. */
+    @FXML private Label errorLabel;
+
+    /** Enlace para redirigir al formulario de registro. */
     @FXML private Hyperlink registerLink;
-    @FXML private ProgressIndicator progressIndicator;
 
-    private final UserService userService;
-    private final AuthSubject authSubject;
-    private final NavigationManager navigator;
+    /** Sujeto que notifica eventos de autenticación a los observadores. */
+    private AuthSubject subject;
 
-    public LoginViewController() {
-        this.userService = new UserService();
-        this.authSubject = AuthSubject.getInstance();
-        this.navigator = NavigationManager.getInstance();
-    }
+    /** Gestor encargado de la navegación entre vistas. */
+    private NavigationManager navegador;
 
+    /** Servicio encargado de la verificación de credenciales de usuario. */
+    private UserService verificacion;
+
+    /**
+     * Inicializa el controlador y configura los eventos de la interfaz.
+     * 
+     * Se ejecuta automáticamente cuando la vista se carga.
+     */
     @FXML
     public void initialize() {
-        messageLabel.setVisible(false);
-        if (progressIndicator != null) {
-            progressIndicator.setVisible(false);
-        }
-        
-        loginButton.setOnAction(e -> handleLogin());
-        passwordField.setOnAction(e -> handleLogin());
+        subject = AuthSubject.getInstance();
+        navegador = NavigationManager.getInstance();
+        verificacion = new UserService();
+
+        errorLabel.setVisible(false);
+
+        loginButton.setOnAction(e -> {
+            try {
+                handleLogin();
+            } catch (AuthenticationException ex) {
+                Logger.getLogger(LoginViewController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        passwordField.setOnAction(e -> {
+            try {
+                handleLogin();
+            } catch (AuthenticationException ex) {
+                Logger.getLogger(LoginViewController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
         registerLink.setOnAction(e -> handleRegister());
-        
-        // Focus en username
-        javafx.application.Platform.runLater(() -> titleField.requestFocus());
     }
 
-    private void setupContent() {
-        VBox content = new VBox(15);
-        content.setPadding(new Insets(20));
-        
-        // Título
-        VBox titleBox = new VBox(8);
-        Label titleLabel = new Label("Título *");
-        titleLabel.setStyle("-fx-font-weight: bold;");
-        titleField = new TextField();
-        titleField.setPromptText("Nombre de la tarea");
-        titleBox.getChildren().addAll(titleLabel, titleField);
-        
-        // Descripción
-        VBox descBox = new VBox(8);
-        Label descLabel = new Label("Descripción");
-        descLabel.setStyle("-fx-font-weight: bold;");
-        descriptionArea = new TextArea();
-        descriptionArea.setPromptText("Detalles adicionales (opcional)");
-        descriptionArea.setPrefRowCount(3);
-        descriptionArea.setWrapText(true);
-        descBox.getChildren().addAll(descLabel, descriptionArea);
-        
-        // Fecha y Prioridad
-        HBox dateAndPriorityBox = new HBox(20);
-        
-        // Fecha
-        VBox dateBox = new VBox(8);
-        Label dateLabel = new Label("Fecha Límite");
-        dateLabel.setStyle("-fx-font-weight: bold;");
-        datePicker = new DatePicker();
-        datePicker.setPromptText("dd/MM/yyyy");
-        datePicker.setConverter(new StringConverter<LocalDate>() {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            
-            @Override
-            public String toString(LocalDate date) {
-                return (date != null) ? formatter.format(date) : "";
+    /**
+     * Maneja el proceso de autenticación del usuario.
+     * 
+     * Valida los campos, autentica el usuario mediante {@link UserService},
+     * y redirige a la vista principal si las credenciales son correctas.
+     *
+     * @throws AuthenticationException si las credenciales no son válidas.
+     */
+    @FXML
+    private void handleLogin() throws AuthenticationException {
+        String username = usernameField.getText().trim();
+        String password = passwordField.getText();
+
+        if (username.isEmpty() || password.isEmpty()) {
+            showError("Por favor, completa todos los campos");
+            return;
+        }
+
+        try {
+            User provisional = verificacion.autenticarUsuario(username, password);
+
+            if (provisional instanceof User) {
+                showSuccess("¡Inicio de sesión exitoso!");
+
+                subject.notifyLogin(provisional);
+
+                javafx.animation.PauseTransition pause =
+                        new javafx.animation.PauseTransition(Duration.seconds(2));
+
+                pause.setOnFinished(event -> {
+                    navegador.navigateTo(loginButton, "/View/MainView.fxml", "/View/css/mainview.css");
+                    Platform.runLater(() -> subject.notifyLogin(provisional));
+                });
+
+                pause.play();
             }
-            
-            @Override
-            public LocalDate fromString(String string) {
-                if (string != null && !string.isEmpty()) {
-                    try {
-                        return LocalDate.parse(string, formatter);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }
-                return null;
-            }
-        });
-        
-        HBox quickButtons = new HBox(5);
-        Button todayBtn = createQuickButton("Hoy");
-        Button tomorrowBtn = createQuickButton("Mañana");
-        Button weekBtn = createQuickButton("1 Semana");
-        
-        todayBtn.setOnAction(e -> datePicker.setValue(LocalDate.now()));
-        tomorrowBtn.setOnAction(e -> datePicker.setValue(LocalDate.now().plusDays(1)));
-        weekBtn.setOnAction(e -> datePicker.setValue(LocalDate.now().plusWeeks(1)));
-        
-        quickButtons.getChildren().addAll(todayBtn, tomorrowBtn, weekBtn);
-        dateBox.getChildren().addAll(dateLabel, datePicker, quickButtons);
-        
-        // Prioridad
-        VBox priorityBox = new VBox(8);
-        Label priorityLabel = new Label("Prioridad");
-        priorityLabel.setStyle("-fx-font-weight: bold;");
-        
-        priorityGroup = new ToggleGroup();
-        
-        RadioButton urgentBtn = new RadioButton("🔥 Urgente");
-        urgentBtn.setToggleGroup(priorityGroup);
-        urgentBtn.setUserData("URGENTE");
-        urgentBtn.setStyle("-fx-text-fill: #dc2626;");
-        
-        RadioButton importantBtn = new RadioButton("⚡ Importante");
-        importantBtn.setToggleGroup(priorityGroup);
-        importantBtn.setUserData("IMPORTANTE");
-        importantBtn.setStyle("-fx-text-fill: #f59e0b;");
-        
-        RadioButton optionalBtn = new RadioButton("📌 Opcional");
-        optionalBtn.setToggleGroup(priorityGroup);
-        optionalBtn.setUserData("OPCIONAL");
-        optionalBtn.setStyle("-fx-text-fill: #10b981;");
-        optionalBtn.setSelected(true);
-        
-        priorityBox.getChildren().addAll(priorityLabel, urgentBtn, importantBtn, optionalBtn);
-        
-        dateAndPriorityBox.getChildren().addAll(dateBox, priorityBox);
-        
-        content.getChildren().addAll(titleBox, descBox, dateAndPriorityBox);
-        getDialogPane().setContent(content);
+
+        } catch (AuthenticationException e) {
+            showError(e.getMessage());
+        }
     }
 
-    private Button createQuickButton(String text) {
-        Button btn = new Button(text);
-        btn.setStyle("-fx-background-color: #e0e7ff; -fx-text-fill: #4f46e5; " +
-                    "-fx-cursor: hand; -fx-background-radius: 5; -fx-font-size: 11px;");
-        return btn;
+    /**
+     * Redirige al formulario de registro de usuario.
+     */
+    @FXML
+    private void handleRegister() {
+        showInfo("Abriendo formulario de registro...");
+        javafx.animation.PauseTransition pause =
+                new javafx.animation.PauseTransition(Duration.seconds(2));
+
+        pause.setOnFinished(event ->
+                navegador.navigateTo(loginButton, "/View/RegisterView.fxml", "/View/css/registerview.css"));
+        pause.play();
     }
 
-    private void setupButtons() {
-        ButtonType createButton = new ButtonType("Crear", ButtonBar.ButtonData.OK_DONE);
-        getDialogPane().getButtonTypes().addAll(createButton, ButtonType.CANCEL);
-        
-        Button createBtn = (Button) getDialogPane().lookupButton(createButton);
-        createBtn.setDisable(true);
-        
-        // Habilitar botón solo si hay título
-        titleField.textProperty().addListener((obs, old, newVal) -> {
-            createBtn.setDisable(newVal.trim().isEmpty());
-        });
+    /**
+     * Muestra un mensaje de error en pantalla.
+     *
+     * @param message texto del error a mostrar
+     */
+    private void showError(String message) {
+        errorLabel.setText(message);
+        errorLabel.setStyle("-fx-text-fill: #ef4444;");
+        showMessage();
     }
 
-    private void setupResultConverter() {
-        setResultConverter(button -> {
-            if (button.getButtonData() == ButtonBar.ButtonData.OK_DONE) {
-                String prioridad = (String) priorityGroup.getSelectedToggle().getUserData();
-                return new MainViewController.TaskData(
-                    titleField.getText().trim(),
-                    descriptionArea.getText().trim(),
-                    datePicker.getValue(),
-                    prioridad
-                );
-            }
-            return null;
-        });
+    /**
+     * Muestra un mensaje de éxito en pantalla.
+     *
+     * @param message texto del mensaje a mostrar
+     */
+    private void showSuccess(String message) {
+        errorLabel.setText(message);
+        errorLabel.setStyle("-fx-text-fill: #10b981;");
+        showMessage();
+    }
+
+    /**
+     * Muestra un mensaje informativo en pantalla.
+     *
+     * @param message texto del mensaje a mostrar
+     */
+    private void showInfo(String message) {
+        errorLabel.setText(message);
+        errorLabel.setStyle("-fx-text-fill: #6366f1;");
+        showMessage();
+    }
+
+    /**
+     * Aplica una animación de aparición gradual (fade-in) al mensaje mostrado.
+     */
+    private void showMessage() {
+        errorLabel.setVisible(true);
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(300), errorLabel);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+        fadeIn.play();
     }
 }

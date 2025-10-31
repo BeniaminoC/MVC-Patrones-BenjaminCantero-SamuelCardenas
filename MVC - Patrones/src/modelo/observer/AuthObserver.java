@@ -4,11 +4,13 @@
  */
 package modelo.observer;
 
+import modelo.entity.User;
+
 /**
  * Observer para eventos de autenticación
  */
 public interface AuthObserver {
-    void onLoginSuccess(String userId, String username);
-    void onRegisterSuccess(String userId, String username);
-    void onLogout(String userId);
+    void onLoginSuccess(User user);
+    void onRegisterSuccess(User user);
+    void onLogout(User user);
 }

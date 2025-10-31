@@ -4,8 +4,6 @@
  */
 package modelo.persistence;
 
-import modelo.entity.Task;
-import modelo.entity.User;
 import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -13,6 +11,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import modelo.entity.Task;
+import modelo.entity.User;
 
 /**
  * Gestor de archivos con control de concurrencia

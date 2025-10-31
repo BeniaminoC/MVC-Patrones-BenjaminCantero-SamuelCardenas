@@ -5,12 +5,13 @@
 
 package modelo.entity;
 
-import javafx.beans.property.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
+
+import javafx.beans.property.*;
 
 /**
  * Entidad Usuario con contraseña hasheada

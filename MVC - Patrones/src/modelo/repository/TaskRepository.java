@@ -4,10 +4,11 @@
  */
 package modelo.repository;
 
-import modelo.entity.Task;
-import modelo.persistence.FileManager;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import modelo.entity.Task;
+import modelo.persistence.FileManager;
 
 /**
  * Repositorio de tareas con caché y sincronización
@@ -42,7 +43,14 @@ public class TaskRepository {
     }
 
     public synchronized void update(Task task) {
-        persist();
+    Optional<Task> optionalTask = findById(task.getId());
+        Task existingTask = optionalTask.get();
+        existingTask.setTitulo(task.getTitulo());
+        existingTask.setDescripcion(task.getDescripcion());
+        existingTask.setFechaLimite(task.getFechaLimite());
+        existingTask.setPrioridad(task.getPrioridad());
+        existingTask.setCompletada(task.isCompletada());
+        persist();      
     }
 
     public synchronized void delete(Task task) {

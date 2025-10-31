@@ -4,17 +4,16 @@
  */
 package Controller;
 
-import Model.SubjectLog;
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.animation.FadeTransition;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.util.Duration;
+
+import modelo.entity.User;
+import modelo.exception.ExistingUserException;
+import modelo.exception.ValidationException;
+import modelo.service.UserService;
+import modelo.observer.AuthSubject;
 
 /**
  * FXML Controller class
@@ -31,69 +30,59 @@ public class RegisterViewController {
     @FXML private Button registerButton;
     @FXML private Label messageLabel;
     @FXML private Hyperlink loginLink;
-    private SubjectLog subject;
+    private AuthSubject subject;
     private NavigationManager navegador;
+    private UserService servicio;
     
     @FXML
     public void initialize() {
-        subject=SubjectLog.getInstance();
+        subject=AuthSubject.getInstance();
         navegador = NavigationManager.getInstance();
-        // Ocultar mensaje al inicio
+        servicio = new UserService();
         messageLabel.setVisible(false);
         
-        // Configurar acciones
-        registerButton.setOnAction(e -> handleRegister());
-        confirmPasswordField.setOnAction(e -> handleRegister());
+        registerButton.setOnAction(e -> {
+            handleRegister();
+        });
+        confirmPasswordField.setOnAction(e -> {
+            handleRegister();
+        });
         loginLink.setOnAction(e -> handleBackToLogin());
     }
     
     @FXML
-    private void handleRegister() {
+    private void handleRegister(){
         String username = usernameField.getText().trim();
         String email = emailField.getText().trim();
         String password = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
         
-        // Validaciones
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             showError("Por favor, completa todos los campos");
             return;
         }
         
-        if (username.length() < 3) {
-            showError("El usuario debe tener al menos 3 caracteres");
-            return;
-        }
-        
-        if (!email.contains("@") || !email.contains(".")) {
-            showError("Por favor, ingresa un email válido");
-            return;
-        }
-        
-        if (password.length() < 6) {
-            showError("La contraseña debe tener al menos 6 caracteres");
-            return;
-        }
-        
-        if (!password.equals(confirmPassword)) {
-            showError("Las contraseñas no coinciden");
-            return;
-        }
-        
-        showSuccess("Creando cuenta...");
-        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(2));
-            pause.setOnFinished(event -> navegador.navigateByRoot(registerButton, "/View/MainView.fxml", "/View/css/mainview.css"));
+        User provisional;
+        try {
+            provisional = servicio.registrarUsuario(username, email, password, confirmPassword);
+            showSuccess("Creando cuenta...");
+            subject.notifyRegister(provisional);
+            javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(2));
+            pause.setOnFinished(event -> navegador.navigateTo(registerButton, "/View/MainView.fxml", "/View/css/mainview.css"));
             pause.play();
-        
+        } catch (ValidationException ex) {
+            showError(ex.getMessage());
+        } catch (ExistingUserException ex) {
+            showError(ex.getMessage());
+        }  
 
     }
     
     @FXML
     private void handleBackToLogin() {
-        // Aquí cargarías la ventana de login
         showInfo("Volviendo al inicio de sesión...");
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(2));
-            pause.setOnFinished(event -> navegador.navigateByRoot(registerButton, "/View/LoginView.fxml", "/View/css/loginview.css"));
+            pause.setOnFinished(event -> navegador.navigateTo(registerButton, "/View/LoginView.fxml", "/View/css/loginview.css"));
             pause.play();
     }
     
@@ -118,7 +107,6 @@ public class RegisterViewController {
     private void showMessage() {
         messageLabel.setVisible(true);
         
-        // Animación de fade in
         FadeTransition fadeIn = new FadeTransition(Duration.millis(300), messageLabel);
         fadeIn.setFromValue(0);
         fadeIn.setToValue(1);

@@ -4,11 +4,12 @@
  */
 package modelo.entity;
 
-import javafx.beans.property.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+
+import javafx.beans.property.*;
 
 /**
  * Entidad unificada de Tarea
