@@ -4,10 +4,8 @@
  */
 package modelo.exception;
 
-/**
- *
- * @author samue
- */
-public class AuthenticationException {
-    
+public class AuthenticationException extends ModelException {
+    public AuthenticationException() {
+        super("Usuario o contraseña incorrectos.");
+    }
 }

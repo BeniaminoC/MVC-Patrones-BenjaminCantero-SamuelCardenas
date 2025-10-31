@@ -4,30 +4,42 @@
  */
 package Main;
 
-import Controller.NavigationManager;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
+import controller.NavigationManager;
 
 /**
- *
- * @author BENJAMIN
+ * Clase principal de la aplicación
  */
-public class Main extends Application{
+public class main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        NavigationManager navegador = NavigationManager.getInstance();
-        navegador.setPrimaryStage(primaryStage);
+    public void start(Stage primaryStage) {
+        NavigationManager navigator = NavigationManager.getInstance();
+        navigator.setPrimaryStage(primaryStage);
+        
         try {
-           navegador.navigateFromStart("/View/LoginView.fxml", "/View/css/loginview.css");
+            navigator.navigateFromStart(
+                "/view/LoginView.fxml", 
+                "/view/css/loginview.css"
+            );
         } catch (Exception e) {
             e.printStackTrace();
+            showErrorAndExit("Error al iniciar la aplicación", e);
         }
     }
-    
+
+    private void showErrorAndExit(String message, Exception e) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+            javafx.scene.control.Alert.AlertType.ERROR
+        );
+        alert.setTitle("Error Fatal");
+        alert.setHeaderText(message);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
+        System.exit(1);
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

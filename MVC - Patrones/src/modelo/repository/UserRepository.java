@@ -6,54 +6,90 @@ package modelo.repository;
 
 import modelo.entity.User;
 import modelo.persistence.FileManager;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+/**
+ * Repositorio de usuarios
+ */
 public class UserRepository {
 
     private static UserRepository instance;
     private final FileManager fileManager;
-    private final List<User> usuarios;
+    private final List<User> cache;
 
     private UserRepository() {
         this.fileManager = new FileManager();
-        this.usuarios = new ArrayList<>(fileManager.loadUsers());
+        this.cache = Collections.synchronizedList(new ArrayList<>());
+        loadCache();
     }
 
-    public static UserRepository getInstance() {
+    public static synchronized UserRepository getInstance() {
         if (instance == null) {
             instance = new UserRepository();
         }
         return instance;
     }
 
-    public void save(User user) {
-        usuarios.add(user);
-        fileManager.saveUsers(usuarios);
+    private void loadCache() {
+        cache.clear();
+        cache.addAll(fileManager.loadUsers());
+    }
+
+    public synchronized void save(User user) {
+        cache.add(user);
+        persist();
+    }
+
+    public synchronized void update(User user) {
+        persist();
+    }
+
+    public synchronized void delete(User user) {
+        cache.removeIf(u -> u.getId().equals(user.getId()));
+        persist();
     }
 
     public List<User> findAll() {
-        return new ArrayList<>(usuarios);
+        synchronized (cache) {
+            return new ArrayList<>(cache);
+        }
+    }
+
+    public Optional<User> findById(String id) {
+        synchronized (cache) {
+            return cache.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst();
+        }
     }
 
     public Optional<User> findByUsername(String username) {
-        return usuarios.stream()
-                .filter(user -> user.getNombreUsuario().equals(username))
+        synchronized (cache) {
+            return cache.stream()
+                .filter(user -> user.getNombreUsuario().equalsIgnoreCase(username))
                 .findFirst();
+        }
     }
 
-    public void delete(User user) {
-        usuarios.remove(user);
-        fileManager.saveUsers(usuarios);
+    public Optional<User> findByEmail(String email) {
+        synchronized (cache) {
+            return cache.stream()
+                .filter(user -> user.getEmail().equalsIgnoreCase(email))
+                .findFirst();
+        }
     }
 
-    public void update() {
-        fileManager.saveUsers(usuarios);
+    private void persist() {
+        fileManager.createBackup("users.txt");
+        fileManager.saveUsers(new ArrayList<>(cache));
     }
 
-    public void clearAll() {
-        usuarios.clear();
-        fileManager.saveUsers(usuarios);
+    public synchronized void refresh() {
+        loadCache();
+    }
+
+    public synchronized void clearAll() {
+        cache.clear();
+        persist();
     }
 }
