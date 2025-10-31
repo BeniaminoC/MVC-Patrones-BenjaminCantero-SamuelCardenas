@@ -5,59 +5,84 @@
 package modelo.service;
 
 import modelo.entity.Task;
-import modelo.exception.ExistingTaskException;
-import modelo.exception.ModelException;
+import modelo.exception.*;
 import modelo.repository.TaskRepository;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio de tareas con validaciones
+ */
 public class TaskService {
 
-    private TaskRepository taskRepository;
+    private final TaskRepository repository;
 
     public TaskService() {
-        this.taskRepository = TaskRepository.getInstance();
+        this.repository = TaskRepository.getInstance();
     }
 
-    public void crearTarea(String titulo, String descripcion) throws ExistingTaskException, ModelException {
+    public Task crearTarea(String titulo, String descripcion, 
+                          LocalDate fechaLimite, String prioridad, 
+                          String usuarioAsignado) throws ValidationException, ExistingTaskException {
+        
+        // Validaciones
         if (titulo == null || titulo.trim().isEmpty()) {
-            throw new ModelException("El título no puede estar vacío");
+            throw new ValidationException("El título no puede estar vacío");
         }
-        Optional<Task> existingTask = taskRepository.findByTitulo(titulo);
-        if (existingTask.isPresent()) {
+        
+        if (titulo.length() > 100) {
+            throw new ValidationException("El título no puede exceder 100 caracteres");
+        }
+
+        // Verificar duplicados
+        Optional<Task> existing = repository.findByTitulo(titulo);
+        if (existing.isPresent() && 
+            usuarioAsignado.equals(existing.get().getUsuarioAsignado())) {
             throw new ExistingTaskException(titulo);
         }
-        Task task = new Task(titulo, descripcion);
-        taskRepository.save(task);
+
+        // Crear tarea
+        Task task = new Task(titulo, descripcion, fechaLimite, prioridad);
+        task.setUsuarioAsignado(usuarioAsignado);
+        
+        repository.save(task);
+        return task;
     }
 
-    public List<Task> obtenerTodasLasTareas() {
-        return taskRepository.findAll();
-    }
-
-    public List<Task> obtenerTareasPendientes() {
-        return taskRepository.findPendientes();
-    }
-
-    public List<Task> obtenerTareasCompletadas() {
-        return taskRepository.findCompletadas();
-    }
-
-    public List<Task> obtenerTareasPorUsuario(String username) {
-        return taskRepository.findByUsuario(username);
+    public void actualizarTarea(Task task) throws ValidationException {
+        if (task.getTitulo() == null || task.getTitulo().trim().isEmpty()) {
+            throw new ValidationException("El título no puede estar vacío");
+        }
+        repository.update(task);
     }
 
     public void eliminarTarea(Task task) {
-        taskRepository.delete(task);
+        repository.delete(task);
     }
 
-    public void actualizarTarea(Task task) {
-        // Como la tarea ya está en la lista, solo necesitamos actualizar el archivo
-        taskRepository.update();
+    public void marcarCompletada(Task task, boolean completada) {
+        task.setCompletada(completada);
+        repository.update(task);
     }
 
-    public void marcarTareaCompletada(Task task) {
-        task.setCompletada(true);
-        taskRepository.update();
+    public List<Task> obtenerTareasUsuario(String username) {
+        return repository.findByUsuario(username);
+    }
+
+    public List<Task> obtenerTareasPendientes(String username) {
+        return repository.findPendientes(username);
+    }
+
+    public List<Task> obtenerTareasCompletadas(String username) {
+        return repository.findCompletadas(username);
+    }
+
+    public List<Task> obtenerTareasPorPrioridad(String username, String prioridad) {
+        return repository.findByPrioridad(username, prioridad);
+    }
+
+    public Optional<Task> buscarPorId(String id) {
+        return repository.findById(id);
     }
 }

@@ -6,94 +6,118 @@ package modelo.repository;
 
 import modelo.entity.Task;
 import modelo.persistence.FileManager;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Repositorio de tareas con caché y sincronización
+ */
 public class TaskRepository {
 
-    private static TaskRepository instance;     // instancia única
-    private final FileManager fileManager;      // gestor de persistencia
-    private final List<Task> tareas;            // lista en memoria
+    private static TaskRepository instance;
+    private final FileManager fileManager;
+    private final List<Task> cache;
 
-    /**
-     * Constructor privado: carga tareas existentes desde el archivo.
-     */
     private TaskRepository() {
         this.fileManager = new FileManager();
-        this.tareas = new ArrayList<>(fileManager.loadTasks());
+        this.cache = Collections.synchronizedList(new ArrayList<>());
+        loadCache();
     }
 
-    /**
-     * Devuelve la instancia única del repositorio.
-     */
-    public static TaskRepository getInstance() {
+    public static synchronized TaskRepository getInstance() {
         if (instance == null) {
             instance = new TaskRepository();
         }
         return instance;
     }
 
-    /**
-     * Guarda una nueva tarea y actualiza el archivo.
-     */
-    public void save(Task task) {
-        tareas.add(task);
-        fileManager.saveTasks(tareas);
+    private void loadCache() {
+        cache.clear();
+        cache.addAll(fileManager.loadTasks());
     }
 
-    /**
-     * Retorna todas las tareas cargadas.
-     */
+    public synchronized void save(Task task) {
+        cache.add(task);
+        persist();
+    }
+
+    public synchronized void update(Task task) {
+        persist();
+    }
+
+    public synchronized void delete(Task task) {
+        cache.removeIf(t -> t.getId().equals(task.getId()));
+        persist();
+    }
+
     public List<Task> findAll() {
-        return new ArrayList<>(tareas); // copia defensiva
+        synchronized (cache) {
+            return new ArrayList<>(cache);
+        }
     }
 
-    /**
-     * Elimina una tarea y actualiza el archivo.
-     */
-    public void delete(Task task) {
-        tareas.remove(task);
-        fileManager.saveTasks(tareas);
-    }
-
-    /**
-     * Fuerza la escritura del estado actual al archivo.
-     */
-    public void update() {
-        fileManager.saveTasks(tareas);
-    }
-
-    /**
-     * Limpia todas las tareas (solo para pruebas o debug).
-     */
-    public void clearAll() {
-        tareas.clear();
-        fileManager.saveTasks(tareas);
+    public Optional<Task> findById(String id) {
+        synchronized (cache) {
+            return cache.stream()
+                .filter(task -> task.getId().equals(id))
+                .findFirst();
+        }
     }
 
     public Optional<Task> findByTitulo(String titulo) {
-        return tareas.stream()
-                .filter(task -> task.getTitulo().equals(titulo))
+        synchronized (cache) {
+            return cache.stream()
+                .filter(task -> task.getTitulo().equalsIgnoreCase(titulo))
                 .findFirst();
-    }
-
-    public List<Task> findPendientes() {
-        return tareas.stream()
-                .filter(task -> !task.isCompletada())
-                .collect(Collectors.toList());
-    }
-
-    public List<Task> findCompletadas() {
-        return tareas.stream()
-                .filter(Task::isCompletada)
-                .collect(Collectors.toList());
+        }
     }
 
     public List<Task> findByUsuario(String username) {
-        return tareas.stream()
+        synchronized (cache) {
+            return cache.stream()
                 .filter(task -> username.equals(task.getUsuarioAsignado()))
                 .collect(Collectors.toList());
+        }
+    }
+
+    public List<Task> findPendientes(String username) {
+        synchronized (cache) {
+            return cache.stream()
+                .filter(task -> username.equals(task.getUsuarioAsignado()))
+                .filter(task -> !task.isCompletada())
+                .collect(Collectors.toList());
+        }
+    }
+
+    public List<Task> findCompletadas(String username) {
+        synchronized (cache) {
+            return cache.stream()
+                .filter(task -> username.equals(task.getUsuarioAsignado()))
+                .filter(Task::isCompletada)
+                .collect(Collectors.toList());
+        }
+    }
+
+    public List<Task> findByPrioridad(String username, String prioridad) {
+        synchronized (cache) {
+            return cache.stream()
+                .filter(task -> username.equals(task.getUsuarioAsignado()))
+                .filter(task -> prioridad.equalsIgnoreCase(task.getPrioridad()))
+                .collect(Collectors.toList());
+        }
+    }
+
+    private void persist() {
+        fileManager.createBackup("tasks.txt");
+        fileManager.saveTasks(new ArrayList<>(cache));
+    }
+
+    public synchronized void refresh() {
+        loadCache();
+    }
+
+    public synchronized void clearAll() {
+        cache.clear();
+        persist();
     }
 }

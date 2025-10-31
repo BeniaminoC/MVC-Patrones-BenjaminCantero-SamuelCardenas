@@ -7,86 +7,132 @@ package modelo.persistence;
 import modelo.entity.Task;
 import modelo.entity.User;
 import java.io.*;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ * Gestor de archivos con control de concurrencia
+ */
 public class FileManager {
 
-    private static final String TASKS_FILE_PATH = "data/tasks.txt";
-    private static final String USERS_FILE_PATH = "data/users.txt"; // Nueva ruta para usuarios
+    private static final String DATA_DIR = "data";
+    private static final String TASKS_FILE = "tasks.txt";
+    private static final String USERS_FILE = "users.txt";
+    
+    private final ReadWriteLock taskLock = new ReentrantReadWriteLock();
+    private final ReadWriteLock userLock = new ReentrantReadWriteLock();
 
-    /**
-     * Carga las tareas desde el archivo.
-     */
+    public FileManager() {
+        initializeDataDirectory();
+    }
+
+    private void initializeDataDirectory() {
+        try {
+            Path dataPath = Paths.get(DATA_DIR);
+            if (!Files.exists(dataPath)) {
+                Files.createDirectories(dataPath);
+            }
+        } catch (IOException e) {
+            System.err.println("Error al crear directorio de datos: " + e.getMessage());
+        }
+    }
+
+    // ========== TAREAS ==========
+
     public List<Task> loadTasks() {
-        return loadEntities(TASKS_FILE_PATH, line -> Task.fromString(line));
+        taskLock.readLock().lock();
+        try {
+            return loadEntities(TASKS_FILE, Task::fromString);
+        } finally {
+            taskLock.readLock().unlock();
+        }
     }
 
-    /**
-     * Guarda las tareas en el archivo.
-     */
     public void saveTasks(List<Task> tareas) {
-        saveEntities(TASKS_FILE_PATH, tareas);
+        taskLock.writeLock().lock();
+        try {
+            saveEntities(TASKS_FILE, tareas);
+        } finally {
+            taskLock.writeLock().unlock();
+        }
     }
 
-    /**
-     * Carga los usuarios desde el archivo.
-     */
+    // ========== USUARIOS ==========
+
     public List<User> loadUsers() {
-        return loadEntities(USERS_FILE_PATH, line -> User.fromString(line));
+        userLock.readLock().lock();
+        try {
+            return loadEntities(USERS_FILE, User::fromString);
+        } finally {
+            userLock.readLock().unlock();
+        }
     }
 
-    /**
-     * Guarda los usuarios en el archivo.
-     */
     public void saveUsers(List<User> usuarios) {
-        saveEntities(USERS_FILE_PATH, usuarios);
+        userLock.writeLock().lock();
+        try {
+            saveEntities(USERS_FILE, usuarios);
+        } finally {
+            userLock.writeLock().unlock();
+        }
     }
 
-    /**
-     * Método genérico para cargar entidades desde un archivo.
-     */
-    private <T> List<T> loadEntities(String filePath, Function<String, T> parser) {
+    // ========== MÉTODOS GENÉRICOS ==========
+
+    private <T> List<T> loadEntities(String filename, Function<String, T> parser) {
         List<T> entities = new ArrayList<>();
-        File file = new File(filePath);
+        Path filePath = Paths.get(DATA_DIR, filename);
 
         try {
-            if (!file.exists()) {
-                file.getParentFile().mkdirs();
-                file.createNewFile();
+            if (!Files.exists(filePath)) {
+                Files.createFile(filePath);
+                return entities;
             }
 
-            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                String linea;
-                while ((linea = reader.readLine()) != null) {
-                    if (!linea.trim().isEmpty()) {
-                        T entity = parser.apply(linea);
-                        if (entity != null) {
-                            entities.add(entity);
-                        }
+            List<String> lines = Files.readAllLines(filePath);
+            for (String line : lines) {
+                if (line != null && !line.trim().isEmpty()) {
+                    T entity = parser.apply(line);
+                    if (entity != null) {
+                        entities.add(entity);
                     }
                 }
             }
 
         } catch (IOException e) {
-            System.err.println("❌ Error al leer el archivo " + filePath + ": " + e.getMessage());
+            System.err.println("Error al leer " + filename + ": " + e.getMessage());
         }
 
         return entities;
     }
 
-    /**
-     * Método genérico para guardar entidades en un archivo.
-     */
-    private <T> void saveEntities(String filePath, List<T> entities) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+    private <T> void saveEntities(String filename, List<T> entities) {
+        Path filePath = Paths.get(DATA_DIR, filename);
+        
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
             for (T entity : entities) {
                 writer.write(entity.toString());
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.err.println("❌ Error al guardar en el archivo " + filePath + ": " + e.getMessage());
+            System.err.println("Error al guardar " + filename + ": " + e.getMessage());
+        }
+    }
+
+    // Backup
+    public void createBackup(String filename) {
+        try {
+            Path source = Paths.get(DATA_DIR, filename);
+            if (Files.exists(source)) {
+                Path backup = Paths.get(DATA_DIR, filename + ".backup");
+                Files.copy(source, backup, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            System.err.println("Error al crear backup: " + e.getMessage());
         }
     }
 }
