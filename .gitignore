@@ -1,0 +1,12 @@
+# === NetBeans / JavaFX ===
+/build/
+/dist/
+nbproject/private/
+*.class
+*.properties
+*.log
+
+# === Configuración del sistema operativo ===
+.DS_Store
+Thumbs.db
+
