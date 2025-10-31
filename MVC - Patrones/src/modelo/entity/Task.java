@@ -91,23 +91,6 @@ public class Task {
         return getFechaLimite().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
-    public String getPriorityColor() {
-        switch (getPrioridad()) {
-            case "URGENTE": return "#dc2626";
-            case "IMPORTANTE": return "#f59e0b";
-            case "OPCIONAL": return "#10b981";
-            default: return "#6b7280";
-        }
-    }
-
-    public String getPriorityBackgroundColor() {
-        switch (getPrioridad()) {
-            case "URGENTE": return "#fee2e2";
-            case "IMPORTANTE": return "#fef3c7";
-            case "OPCIONAL": return "#d1fae5";
-            default: return "#f3f4f6";
-        }
-    }
 
     // Serialización
     @Override

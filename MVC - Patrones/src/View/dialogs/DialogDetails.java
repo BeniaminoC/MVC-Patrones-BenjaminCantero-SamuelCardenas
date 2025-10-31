@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package modelo.service;
+package View.dialogs;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -19,23 +19,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import modelo.entity.Task;
+import Controller.util.TaskStyleHelper; // <-- import agregado
 
-/**
- *
- * @author BENJAMIN
- */
 /**
  * {@code DialogDetails} representa un cuadro de diálogo personalizado que muestra los detalles
  * completos de una tarea ({@link Task}) en la aplicación.
- *
- * Extiende la clase {@link javafx.scene.control.Dialog} para mostrar información de manera visual
- * y dinámica, incluyendo prioridad, estado, descripción, fecha límite y advertencias visuales.
- *
- * El cuadro aplica estilos visuales según la prioridad de la tarea y resalta la urgencia de
- * la fecha límite mediante colores, íconos y una barra de progreso.
- *
- *
- * @author BENJAMIN
  */
 public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
@@ -61,10 +49,10 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
         getDialogPane().setStyle("-fx-background-color: white;");
 
-        getDialogPane().setStyle("-fx-background-color: white;"); javafx.application.Platform.runLater(() -> {
+        javafx.application.Platform.runLater(() -> {
             Region header = (Region) getDialogPane().lookup(".header-panel");
             if (header != null) {
-                header.setStyle("-fx-background-color: " + task.getPriorityColor() + "; -fx-text-fill: white;");
+                header.setStyle("-fx-background-color: " + TaskStyleHelper.getPriorityColor(task) + "; -fx-text-fill: white;");
             }
             Label headerLabel = (Label) getDialogPane().lookup(".header-panel .label");
             if (headerLabel != null) {
@@ -155,7 +143,7 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
         Label priorityBadge = new Label(task.getPrioridad());
         priorityBadge.setStyle(
-            "-fx-background-color: " + task.getPriorityColor() + "; " +
+            "-fx-background-color: " + TaskStyleHelper.getPriorityColor(task) + "; " +
             "-fx-text-fill: white; " +
             "-fx-padding: 8 16; " +
             "-fx-background-radius: 20; " +

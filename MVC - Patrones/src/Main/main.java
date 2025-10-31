@@ -9,26 +9,27 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- * Clase principal de la aplicación
+ * Clase principal de la aplicación TaskLink
  */
 public class main extends Application {
-
+    
     @Override
     public void start(Stage primaryStage) {
         NavigationManager navigator = NavigationManager.getInstance();
         navigator.setPrimaryStage(primaryStage);
         
         try {
+            // ✅ Corregido: View con mayúscula
             navigator.navigateFromStart(
-                "/view/LoginView.fxml", 
-                "/view/css/loginview.css"
+                "/View/LoginView.fxml", 
+                "/View/css/loginview.css"
             );
         } catch (Exception e) {
             e.printStackTrace();
             showErrorAndExit("Error al iniciar la aplicación", e);
         }
     }
-
+    
     private void showErrorAndExit(String message, Exception e) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
             javafx.scene.control.Alert.AlertType.ERROR
@@ -39,7 +40,7 @@ public class main extends Application {
         alert.showAndWait();
         System.exit(1);
     }
-
+    
     public static void main(String[] args) {
         launch(args);
     }

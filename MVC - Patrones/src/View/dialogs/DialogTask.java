@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package modelo.service;
+package View.dialogs;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,14 +25,12 @@ import modelo.entity.Task;
 
 
 /**
- * Clase que representa un cuadro de diálogo personalizado para la creación de tareas.
- * Extiende {@link javafx.scene.control.Dialog} y permite al usuario ingresar el título,
- * descripción, fecha límite y prioridad de una nueva tarea.
- * 
+ * Clase que representa un cuadro de diálogo personalizado para la creación de tareas.Extiende {@link javafx.scene.control.Dialog} y permite al usuario ingresar el título,
+ descripción, fecha límite y prioridad de una nueva tarea. 
  * Incluye validaciones, estilos personalizados y opciones rápidas para asignar
- * fechas comunes como “Hoy”, “Mañana” o “Próxima semana”.
- * 
- * El diálogo devuelve un objeto {@link Task} configurado con los datos
+ fechas comunes como “Hoy”, “Mañana” o “Próxima semana”.
+ 
+ El diálogo devuelve un objeto {@link Task} configurado con los datos
  * introducidos por el usuario al confirmar la creación.
  * 
  * @author BENJAMIN
