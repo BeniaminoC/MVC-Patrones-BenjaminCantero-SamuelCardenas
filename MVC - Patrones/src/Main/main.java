@@ -4,17 +4,31 @@
  */
 package Main;
 
+import Controller.NavigationManager;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
 /**
  *
  * @author BENJAMIN
  */
-public class main {
+public class Main extends Application{
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        NavigationManager navegador = NavigationManager.getInstance();
+        navegador.setPrimaryStage(primaryStage);
+        try {
+           navegador.navigateFromStart("/View/LoginView.fxml", "/View/css/loginview.css");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
+    public static void main(String[] args) {
+        launch(args);
+    }
 }
