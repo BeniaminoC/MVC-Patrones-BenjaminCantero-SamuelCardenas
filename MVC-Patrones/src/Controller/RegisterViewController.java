@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.animation.FadeTransition;
 import javafx.util.Duration;
+import javafx.application.Platform;
 
 import modelo.entity.User;
 import modelo.exception.ExistingUserException;
@@ -71,16 +72,20 @@ public class RegisterViewController {
         try {
             provisional = servicio.registrarUsuario(username, email, password, confirmPassword);
             showSuccess("Creando cuenta...");
-            subject.notifyRegister(provisional);
+
             javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(2));
-            pause.setOnFinished(event -> navegador.navigateTo(registerButton, "/View/MainView.fxml", "/View/css/mainview.css"));
-            pause.play();
+            pause.setOnFinished(event -> {
+                navegador.navigateTo(registerButton, "/View/MainView.fxml", "/View/css/mainview.css");
+                Platform.runLater(() -> subject.notifyRegister(provisional));
+            });
+
+            pause.play(); // 👈 ahora está en el lugar correcto
+
         } catch (ValidationException ex) {
             showError(ex.getMessage());
         } catch (ExistingUserException ex) {
             showError(ex.getMessage());
         }
-
     }
 
     @FXML

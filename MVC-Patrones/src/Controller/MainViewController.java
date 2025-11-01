@@ -165,11 +165,7 @@ public class MainViewController implements AuthObserver {
     @Override
     public void onRegisterSuccess(User user) {
         usuario = user;
-        // El usuario ya fue guardado en UserService.registrarUsuario()
-        tasks.clear();
-        taskListContainer.getChildren().clear();
-        updateStats();
-        showEmptyState();
+       
     }
 
     @Override
