@@ -7,7 +7,8 @@ package modelo.decorator;
 import modelo.entity.Task;
 
 /**
- * Componente base para decoradores de tareas
+ *
+ * @author samue
  */
 public interface TaskComponent {
     String getId();

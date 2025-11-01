@@ -16,7 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Maneja los eventos de interacción con las tareas.
+ *
+ * @author samue
  */
 public class TaskEventHandler {
 

@@ -4,7 +4,12 @@
  */
 package modelo.exception;
 
+/**
+ *
+ * @author samue
+ */
 public class ValidationException extends ModelException {
+
     public ValidationException(String message) {
         super(message);
     }

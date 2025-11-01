@@ -5,7 +5,8 @@
 package modelo.decorator;
 
 /**
- * Decorador para tareas completadas
+ *
+ * @author samue
  */
 public class CompletedTaskDecorator extends TaskDecorator {
 

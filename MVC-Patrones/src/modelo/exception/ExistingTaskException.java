@@ -4,7 +4,12 @@
  */
 package modelo.exception;
 
+/**
+ *
+ * @author samue
+ */
 public class ExistingTaskException extends ModelException {
+
     public ExistingTaskException(String titulo) {
         super("La tarea '" + titulo + "' ya existe.");
     }

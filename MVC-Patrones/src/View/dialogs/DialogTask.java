@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -23,36 +24,20 @@ import javafx.util.StringConverter;
 
 import modelo.entity.Task;
 
-
 /**
- * Clase que representa un cuadro de diálogo personalizado para la creación de tareas.Extiende {@link javafx.scene.control.Dialog} y permite al usuario ingresar el título,
- descripción, fecha límite y prioridad de una nueva tarea. 
- * Incluye validaciones, estilos personalizados y opciones rápidas para asignar
- fechas comunes como “Hoy”, “Mañana” o “Próxima semana”.
- 
- El diálogo devuelve un objeto {@link Task} configurado con los datos
- * introducidos por el usuario al confirmar la creación.
- * 
+ *
  * @author BENJAMIN
  */
 public class DialogTask extends javafx.scene.control.Dialog<Task> {
 
-    /** Campo de texto para ingresar el título de la tarea. */
     private TextField titleField;
 
-    /** Área de texto para ingresar la descripción de la tarea. */
     private TextArea descriptionField;
 
-    /** Selector de fecha para establecer la fecha límite. */
     private DatePicker datePicker;
 
-    /** Valor seleccionado de prioridad (URGENTE, IMPORTANTE u OPCIONAL). */
     private String selectedPriority = "OPCIONAL";
 
-    /**
-     * Constructor que inicializa y configura todos los componentes visuales del diálogo.
-     * Define los campos de entrada, botones, estilos CSS y lógica para la creación de una nueva tarea.
-     */
     public DialogTask() {
         setTitle("Nueva Tarea");
         setHeaderText("Crear nueva tarea");
@@ -205,4 +190,3 @@ public class DialogTask extends javafx.scene.control.Dialog<Task> {
         javafx.application.Platform.runLater(() -> titleField.requestFocus());
     }
 }
-

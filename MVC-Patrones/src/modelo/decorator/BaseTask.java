@@ -1,4 +1,4 @@
-/*
+ /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -7,7 +7,8 @@ package modelo.decorator;
 import modelo.entity.Task;
 
 /**
- * Implementación base de TaskComponent
+ *
+ * @author samue
  */
 public class BaseTask implements TaskComponent {
     protected final Task task;

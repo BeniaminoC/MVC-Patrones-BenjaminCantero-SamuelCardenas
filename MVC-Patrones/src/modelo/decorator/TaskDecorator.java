@@ -5,7 +5,8 @@
 package modelo.decorator;
 
 /**
- * Decorador abstracto para tareas
+ *
+ * @author samue
  */
 public abstract class TaskDecorator implements TaskComponent {
     protected final TaskComponent wrappedTask;

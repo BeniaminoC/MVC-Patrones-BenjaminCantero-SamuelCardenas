@@ -5,7 +5,8 @@
 package modelo.decorator;
 
 /**
- * Decorador para tareas urgentes
+ *
+ * @author samue
  */
 public class UrgentTaskDecorator extends TaskDecorator {
 

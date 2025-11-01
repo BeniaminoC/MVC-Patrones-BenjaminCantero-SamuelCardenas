@@ -11,7 +11,8 @@ import modelo.entity.Task;
 import modelo.persistence.FileManager;
 
 /**
- * Repositorio de tareas con caché y sincronización
+ *
+ * @author samue
  */
 public class TaskRepository {
 
@@ -42,15 +43,22 @@ public class TaskRepository {
         persist();
     }
 
+    // Actualiza una tarea existente en el caché
     public synchronized void update(Task task) {
-    Optional<Task> optionalTask = findById(task.getId());
+        Optional<Task> optionalTask = findById(task.getId());
+
+        if (!optionalTask.isPresent()) {
+            throw new IllegalArgumentException("No se puede actualizar: tarea con ID " + task.getId() + " no encontrada");
+        }
+
         Task existingTask = optionalTask.get();
         existingTask.setTitulo(task.getTitulo());
         existingTask.setDescripcion(task.getDescripcion());
         existingTask.setFechaLimite(task.getFechaLimite());
         existingTask.setPrioridad(task.getPrioridad());
         existingTask.setCompletada(task.isCompletada());
-        persist();      
+
+        persist();
     }
 
     public synchronized void delete(Task task) {
@@ -67,51 +75,51 @@ public class TaskRepository {
     public Optional<Task> findById(String id) {
         synchronized (cache) {
             return cache.stream()
-                .filter(task -> task.getId().equals(id))
-                .findFirst();
+                    .filter(task -> task.getId().equals(id))
+                    .findFirst();
         }
     }
 
     public Optional<Task> findByTitulo(String titulo) {
         synchronized (cache) {
             return cache.stream()
-                .filter(task -> task.getTitulo().equalsIgnoreCase(titulo))
-                .findFirst();
+                    .filter(task -> task.getTitulo().equalsIgnoreCase(titulo))
+                    .findFirst();
         }
     }
 
     public List<Task> findByUsuario(String username) {
         synchronized (cache) {
             return cache.stream()
-                .filter(task -> username.equals(task.getUsuarioAsignado()))
-                .collect(Collectors.toList());
+                    .filter(task -> username.equals(task.getUsuarioAsignado()))
+                    .collect(Collectors.toList());
         }
     }
 
     public List<Task> findPendientes(String username) {
         synchronized (cache) {
             return cache.stream()
-                .filter(task -> username.equals(task.getUsuarioAsignado()))
-                .filter(task -> !task.isCompletada())
-                .collect(Collectors.toList());
+                    .filter(task -> username.equals(task.getUsuarioAsignado()))
+                    .filter(task -> !task.isCompletada())
+                    .collect(Collectors.toList());
         }
     }
 
     public List<Task> findCompletadas(String username) {
         synchronized (cache) {
             return cache.stream()
-                .filter(task -> username.equals(task.getUsuarioAsignado()))
-                .filter(Task::isCompletada)
-                .collect(Collectors.toList());
+                    .filter(task -> username.equals(task.getUsuarioAsignado()))
+                    .filter(Task::isCompletada)
+                    .collect(Collectors.toList());
         }
     }
 
     public List<Task> findByPrioridad(String username, String prioridad) {
         synchronized (cache) {
             return cache.stream()
-                .filter(task -> username.equals(task.getUsuarioAsignado()))
-                .filter(task -> prioridad.equalsIgnoreCase(task.getPrioridad()))
-                .collect(Collectors.toList());
+                    .filter(task -> username.equals(task.getUsuarioAsignado()))
+                    .filter(task -> prioridad.equalsIgnoreCase(task.getPrioridad()))
+                    .collect(Collectors.toList());
         }
     }
 

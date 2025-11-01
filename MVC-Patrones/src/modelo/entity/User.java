@@ -14,7 +14,8 @@ import java.util.Base64;
 import javafx.beans.property.*;
 
 /**
- * Entidad Usuario con contraseña hasheada
+ *
+ * @author samue
  */
 public class User {
 
@@ -24,13 +25,13 @@ public class User {
     private final StringProperty passwordHash;
     private final ObjectProperty<LocalDateTime> fechaRegistro;
 
-    // Constructor para registro
+
     public User(String nombreUsuario, String email, String password) {
         this(java.util.UUID.randomUUID().toString(), nombreUsuario, email, 
              hashPassword(password), LocalDateTime.now());
     }
 
-    // Constructor completo
+
     public User(String id, String nombreUsuario, String email, 
                 String passwordHash, LocalDateTime fechaRegistro) {
         this.id = new SimpleStringProperty(id);

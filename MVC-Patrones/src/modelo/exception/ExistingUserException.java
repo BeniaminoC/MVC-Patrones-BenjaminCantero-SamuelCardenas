@@ -4,7 +4,12 @@
  */
 package modelo.exception;
 
+/**
+ *
+ * @author samue
+ */
 public class ExistingUserException extends ModelException {
+
     public ExistingUserException(String username) {
         super("El usuario '" + username + "' ya existe.");
     }

@@ -5,7 +5,8 @@
 package modelo.decorator;
 
 /**
- * Decorador para tareas con fecha límite
+ *
+ * @author samue
  */
 public class DeadlineTaskDecorator extends TaskDecorator {
 

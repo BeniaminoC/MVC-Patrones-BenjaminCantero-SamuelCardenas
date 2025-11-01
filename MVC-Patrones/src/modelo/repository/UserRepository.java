@@ -9,9 +9,9 @@ import java.util.*;
 import modelo.entity.User;
 import modelo.persistence.FileManager;
 
-
 /**
- * Repositorio de usuarios
+ *
+ * @author samue
  */
 public class UserRepository {
 
@@ -60,24 +60,24 @@ public class UserRepository {
     public Optional<User> findById(String id) {
         synchronized (cache) {
             return cache.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst();
+                    .filter(user -> user.getId().equals(id))
+                    .findFirst();
         }
     }
 
     public Optional<User> findByUsername(String username) {
         synchronized (cache) {
             return cache.stream()
-                .filter(user -> user.getNombreUsuario().equalsIgnoreCase(username))
-                .findFirst();
+                    .filter(user -> user.getNombreUsuario().equalsIgnoreCase(username))
+                    .findFirst();
         }
     }
 
     public Optional<User> findByEmail(String email) {
         synchronized (cache) {
             return cache.stream()
-                .filter(user -> user.getEmail().equalsIgnoreCase(email))
-                .findFirst();
+                    .filter(user -> user.getEmail().equalsIgnoreCase(email))
+                    .findFirst();
         }
     }
 

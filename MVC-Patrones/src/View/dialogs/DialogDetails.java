@@ -4,45 +4,29 @@
  */
 package View.dialogs;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Separator;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 import modelo.entity.Task;
-import Controller.util.TaskStyleHelper; // <-- import agregado
+import Controller.util.TaskStyleHelper;
+import Controller.util.TaskUrgencyHelper;
+import Controller.util.TaskUrgencyHelper.UrgencyInfo;
 
 /**
- * {@code DialogDetails} representa un cuadro de diálogo personalizado que muestra los detalles
- * completos de una tarea ({@link Task}) en la aplicación.
+ *
+ * @author BENJAMIN
  */
 public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
-    /** Tarea asociada cuyos detalles se mostrarán. */
     private Task task;
 
-    /**
-     * Crea una nueva instancia del cuadro de diálogo con los detalles de la tarea.
-     *
-     * @param task objeto {@link Task} del cual se mostrarán los detalles
-     */
     public DialogDetails(Task task) {
         this.task = task;
         initializeDialog();
     }
 
-    /**
-     * Configura el diálogo principal, aplicando título, cabecera, contenido y estilos.
-     */
     private void initializeDialog() {
         setTitle("Detalles de la Tarea");
         setHeaderText(task.getTitulo());
@@ -62,7 +46,6 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
         VBox content = createContent();
         getDialogPane().setContent(content);
-
         getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 
         javafx.application.Platform.runLater(() -> {
@@ -73,11 +56,6 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
         });
     }
 
-    /**
-     * Construye y organiza todas las secciones visuales del contenido del diálogo.
-     *
-     * @return contenedor principal del contenido
-     */
     private VBox createContent() {
         VBox content = new VBox(20);
         content.setPadding(new Insets(25));
@@ -104,11 +82,6 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
         return content;
     }
 
-    /**
-     * Crea la sección que muestra el estado actual de la tarea.
-     *
-     * @return contenedor con el estado y su etiqueta
-     */
     private VBox createStatusSection() {
         VBox section = new VBox(8);
 
@@ -130,11 +103,6 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
         return section;
     }
 
-    /**
-     * Crea la sección que muestra la prioridad de la tarea.
-     *
-     * @return contenedor con la prioridad
-     */
     private VBox createPrioritySection() {
         VBox section = new VBox(8);
 
@@ -143,23 +111,18 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
         Label priorityBadge = new Label(task.getPrioridad());
         priorityBadge.setStyle(
-            "-fx-background-color: " + TaskStyleHelper.getPriorityColor(task) + "; " +
-            "-fx-text-fill: white; " +
-            "-fx-padding: 8 16; " +
-            "-fx-background-radius: 20; " +
-            "-fx-font-size: 14px; " +
-            "-fx-font-weight: bold;"
+                "-fx-background-color: " + TaskStyleHelper.getPriorityColor(task) + "; "
+                + "-fx-text-fill: white; "
+                + "-fx-padding: 8 16; "
+                + "-fx-background-radius: 20; "
+                + "-fx-font-size: 14px; "
+                + "-fx-font-weight: bold;"
         );
 
         section.getChildren().addAll(titleLabel, priorityBadge);
         return section;
     }
 
-    /**
-     * Crea la sección que muestra la descripción de la tarea.
-     *
-     * @return contenedor con la descripción
-     */
     private VBox createDescriptionSection() {
         VBox section = new VBox(8);
 
@@ -169,22 +132,18 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
         Label descContent = new Label(task.getDescripcion());
         descContent.setWrapText(true);
         descContent.setStyle(
-            "-fx-font-size: 14px; " +
-            "-fx-text-fill: #374151; " +
-            "-fx-padding: 12; " +
-            "-fx-background-color: #f9fafb; " +
-            "-fx-background-radius: 8;"
+                "-fx-font-size: 14px; "
+                + "-fx-text-fill: #374151; "
+                + "-fx-padding: 12; "
+                + "-fx-background-color: #f9fafb; "
+                + "-fx-background-radius: 8;"
         );
 
         section.getChildren().addAll(titleLabel, descContent);
         return section;
     }
 
-    /**
-     * Crea la sección que muestra la fecha límite y el progreso según la urgencia.
-     *
-     * @return contenedor con la información de fecha límite
-     */
+    //Crea la sección de fecha límite.
     private VBox createDueDateSection() {
         VBox section = new VBox(8);
 
@@ -196,66 +155,23 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
         Label dateLabel = new Label("📅 " + task.getFechaLimiteFormatted());
         dateLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1f2937;");
-
-        long daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), task.getFechaLimite());
-        String daysText;
-        String urgencyColor;
-
-        if (daysUntil < 0) {
-            daysText = "⚠️ Vencida hace " + Math.abs(daysUntil) + " día" + (Math.abs(daysUntil) == 1 ? "" : "s");
-            urgencyColor = "#dc2626";
-        } else if (daysUntil == 0) {
-            daysText = "⏰ Vence HOY";
-            urgencyColor = "#f59e0b";
-        } else if (daysUntil == 1) {
-            daysText = "⏰ Vence MAÑANA";
-            urgencyColor = "#f59e0b";
-        } else if (daysUntil <= 3) {
-            daysText = "⏳ Faltan " + daysUntil + " días";
-            urgencyColor = "#f59e0b";
-        } else if (daysUntil <= 7) {
-            daysText = "📊 Faltan " + daysUntil + " días";
-            urgencyColor = "#3b82f6";
-        } else {
-            daysText = "✓ Faltan " + daysUntil + " días";
-            urgencyColor = "#10b981";
-        }
-
-        Label urgencyLabel = new Label(daysText);
-        urgencyLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: " + urgencyColor + "; -fx-font-weight: bold;");
-
+        UrgencyInfo urgency = TaskUrgencyHelper.getUrgencyInfo(task.getFechaLimite());
+        Label urgencyLabel = new Label(urgency.getFullText());
+        urgencyLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: " + urgency.getColor() + "; -fx-font-weight: bold;");
         ProgressBar progressBar = new ProgressBar();
         progressBar.setPrefWidth(350);
         progressBar.setPrefHeight(8);
-
-        double progress;
-        if (daysUntil < 0) {
-            progress = 1.0;
-        } else if (daysUntil <= 7) {
-            progress = 1.0 - (daysUntil / 7.0);
-        } else {
-            progress = 0.0;
-        }
-
-        progressBar.setProgress(progress);
-        progressBar.setStyle("-fx-accent: " + urgencyColor + ";");
-
+        progressBar.setProgress(urgency.getProgress());
+        progressBar.setStyle("-fx-accent: " + urgency.getColor() + ";");
         dateBox.getChildren().addAll(dateLabel, urgencyLabel, progressBar);
         section.getChildren().addAll(titleLabel, dateBox);
         return section;
     }
 
-    /**
-     * Crea una sección con información adicional o consejos para el usuario.
-     *
-     * @return contenedor con mensaje adicional
-     */
     private VBox createAdditionalInfo() {
         VBox section = new VBox(5);
-
         Label infoLabel = new Label("💡 Haz clic en el checkbox para marcar como completada");
         infoLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #9ca3af; -fx-font-style: italic;");
-
         section.getChildren().add(infoLabel);
         return section;
     }

@@ -4,7 +4,6 @@
  */
 package Controller.util;
 
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -13,7 +12,8 @@ import modelo.entity.Task;
 import Controller.handler.TaskEventHandler;
 
 /**
- * Construye la representación visual de una tarea.
+ *
+ * @author BENJAMIN
  */
 public class TaskUIBuilder {
 
@@ -23,9 +23,9 @@ public class TaskUIBuilder {
         taskItem.setPadding(new Insets(15));
         taskItem.getStyleClass().add("task-item");
 
-        CheckBox checkBox = new CheckBox();        checkBox.setSelected(task.isCompletada());
+        CheckBox checkBox = new CheckBox();
+        checkBox.setSelected(task.isCompletada());
         checkBox.setOnAction(e -> handler.handleCheckBox(task, taskItem, checkBox));
-        
 
         Label title = new Label(task.getTitulo());
         title.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #1f2937;");
@@ -43,4 +43,3 @@ public class TaskUIBuilder {
         return taskItem;
     }
 }
-

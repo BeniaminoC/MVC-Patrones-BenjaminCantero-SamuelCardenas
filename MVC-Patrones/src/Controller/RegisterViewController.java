@@ -16,31 +16,36 @@ import modelo.service.UserService;
 import modelo.observer.AuthSubject;
 
 /**
- * FXML Controller class
  *
  * @author BENJAMIN
  */
-
 public class RegisterViewController {
-    
-    @FXML private TextField usernameField;
-    @FXML private TextField emailField;
-    @FXML private PasswordField passwordField;
-    @FXML private PasswordField confirmPasswordField;
-    @FXML private Button registerButton;
-    @FXML private Label messageLabel;
-    @FXML private Hyperlink loginLink;
+
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private TextField emailField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private PasswordField confirmPasswordField;
+    @FXML
+    private Button registerButton;
+    @FXML
+    private Label messageLabel;
+    @FXML
+    private Hyperlink loginLink;
     private AuthSubject subject;
     private NavigationManager navegador;
     private UserService servicio;
-    
+
     @FXML
     public void initialize() {
-        subject=AuthSubject.getInstance();
+        subject = AuthSubject.getInstance();
         navegador = NavigationManager.getInstance();
         servicio = new UserService();
         messageLabel.setVisible(false);
-        
+
         registerButton.setOnAction(e -> {
             handleRegister();
         });
@@ -49,19 +54,19 @@ public class RegisterViewController {
         });
         loginLink.setOnAction(e -> handleBackToLogin());
     }
-    
+
     @FXML
-    private void handleRegister(){
+    private void handleRegister() {
         String username = usernameField.getText().trim();
         String email = emailField.getText().trim();
         String password = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
-        
+
         if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             showError("Por favor, completa todos los campos");
             return;
         }
-        
+
         User provisional;
         try {
             provisional = servicio.registrarUsuario(username, email, password, confirmPassword);
@@ -74,43 +79,43 @@ public class RegisterViewController {
             showError(ex.getMessage());
         } catch (ExistingUserException ex) {
             showError(ex.getMessage());
-        }  
+        }
 
     }
-    
+
     @FXML
     private void handleBackToLogin() {
         showInfo("Volviendo al inicio de sesión...");
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(Duration.seconds(2));
-            pause.setOnFinished(event -> navegador.navigateTo(registerButton, "/View/LoginView.fxml", "/View/css/loginview.css"));
-            pause.play();
+        pause.setOnFinished(event -> navegador.navigateTo(registerButton, "/View/LoginView.fxml", "/View/css/loginview.css"));
+        pause.play();
     }
-    
+
     private void showError(String message) {
         messageLabel.setText(message);
         messageLabel.setStyle("-fx-text-fill: #ef4444;");
         showMessage();
     }
-    
+
     private void showSuccess(String message) {
         messageLabel.setText(message);
         messageLabel.setStyle("-fx-text-fill: #10b981;");
         showMessage();
     }
-    
+
     private void showInfo(String message) {
         messageLabel.setText(message);
         messageLabel.setStyle("-fx-text-fill: #6366f1;");
         showMessage();
     }
-    
+
     private void showMessage() {
         messageLabel.setVisible(true);
-        
+
         FadeTransition fadeIn = new FadeTransition(Duration.millis(300), messageLabel);
         fadeIn.setFromValue(0);
         fadeIn.setToValue(1);
         fadeIn.play();
     }
-    
+
 }

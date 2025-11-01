@@ -9,30 +9,30 @@ import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- * Clase principal de la aplicación TaskLink
+ *
+ * @author BENJAMIN
  */
 public class main extends Application {
-    
+
     @Override
     public void start(Stage primaryStage) {
         NavigationManager navigator = NavigationManager.getInstance();
         navigator.setPrimaryStage(primaryStage);
-        
+
         try {
-            // ✅ Corregido: View con mayúscula
             navigator.navigateFromStart(
-                "/View/LoginView.fxml", 
-                "/View/css/loginview.css"
+                    "/View/LoginView.fxml",
+                    "/View/css/loginview.css"
             );
         } catch (Exception e) {
             e.printStackTrace();
             showErrorAndExit("Error al iniciar la aplicación", e);
         }
     }
-    
+
     private void showErrorAndExit(String message, Exception e) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-            javafx.scene.control.Alert.AlertType.ERROR
+                javafx.scene.control.Alert.AlertType.ERROR
         );
         alert.setTitle("Error Fatal");
         alert.setHeaderText(message);
@@ -40,7 +40,7 @@ public class main extends Application {
         alert.showAndWait();
         System.exit(1);
     }
-    
+
     public static void main(String[] args) {
         launch(args);
     }

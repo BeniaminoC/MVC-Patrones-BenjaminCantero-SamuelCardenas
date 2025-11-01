@@ -16,14 +16,15 @@ import modelo.entity.Task;
 import modelo.entity.User;
 
 /**
- * Gestor de archivos con control de concurrencia
+ *
+ * @author samue
  */
 public class FileManager {
 
     private static final String DATA_DIR = "data";
     private static final String TASKS_FILE = "tasks.txt";
     private static final String USERS_FILE = "users.txt";
-    
+
     private final ReadWriteLock taskLock = new ReentrantReadWriteLock();
     private final ReadWriteLock userLock = new ReentrantReadWriteLock();
 
@@ -43,7 +44,6 @@ public class FileManager {
     }
 
     // ========== TAREAS ==========
-
     public List<Task> loadTasks() {
         taskLock.readLock().lock();
         try {
@@ -63,7 +63,6 @@ public class FileManager {
     }
 
     // ========== USUARIOS ==========
-
     public List<User> loadUsers() {
         userLock.readLock().lock();
         try {
@@ -83,7 +82,6 @@ public class FileManager {
     }
 
     // ========== MÉTODOS GENÉRICOS ==========
-
     private <T> List<T> loadEntities(String filename, Function<String, T> parser) {
         List<T> entities = new ArrayList<>();
         Path filePath = Paths.get(DATA_DIR, filename);
@@ -113,7 +111,7 @@ public class FileManager {
 
     private <T> void saveEntities(String filename, List<T> entities) {
         Path filePath = Paths.get(DATA_DIR, filename);
-        
+
         try (BufferedWriter writer = Files.newBufferedWriter(filePath)) {
             for (T entity : entities) {
                 writer.write(entity.toString());

@@ -12,11 +12,11 @@ import java.util.UUID;
 import javafx.beans.property.*;
 
 /**
- * Entidad unificada de Tarea
- * Combina funcionalidad de Task y TaskUI con properties observables
+ *
+ * @author samue
  */
 public class Task {
-    
+
     private final StringProperty id;
     private final StringProperty titulo;
     private final StringProperty descripcion;
@@ -27,16 +27,14 @@ public class Task {
     private final StringProperty prioridad;
     private final StringProperty etiquetas; // tags separados por comas
 
-    // Constructor para nuevas tareas
     public Task(String titulo, String descripcion, LocalDate fechaLimite, String prioridad) {
-        this(UUID.randomUUID().toString(), titulo, descripcion, false, 
-             LocalDateTime.now(), fechaLimite, null, prioridad, "");
+        this(UUID.randomUUID().toString(), titulo, descripcion, false,
+                LocalDateTime.now(), fechaLimite, null, prioridad, "");
     }
 
-    // Constructor completo
     public Task(String id, String titulo, String descripcion, boolean completada,
-                LocalDateTime fechaCreacion, LocalDate fechaLimite,
-                String usuarioAsignado, String prioridad, String etiquetas) {
+            LocalDateTime fechaCreacion, LocalDate fechaLimite,
+            String usuarioAsignado, String prioridad, String etiquetas) {
         this.id = new SimpleStringProperty(id);
         this.titulo = new SimpleStringProperty(titulo != null ? titulo : "");
         this.descripcion = new SimpleStringProperty(descripcion != null ? descripcion : "");
@@ -45,72 +43,141 @@ public class Task {
         this.fechaLimite = new SimpleObjectProperty<>(fechaLimite);
         this.usuarioAsignado = new SimpleStringProperty(usuarioAsignado);
         this.prioridad = new SimpleStringProperty(
-            prioridad != null ? prioridad.toUpperCase() : "OPCIONAL");
+                prioridad != null ? prioridad.toUpperCase() : "OPCIONAL");
         this.etiquetas = new SimpleStringProperty(etiquetas != null ? etiquetas : "");
     }
 
-    // Getters y Properties
-    public String getId() { return id.get(); }
-    public StringProperty idProperty() { return id; }
+    public String getId() {
+        return id.get();
+    }
 
-    public String getTitulo() { return titulo.get(); }
-    public void setTitulo(String value) { titulo.set(value); }
-    public StringProperty tituloProperty() { return titulo; }
+    public StringProperty idProperty() {
+        return id;
+    }
 
-    public String getDescripcion() { return descripcion.get(); }
-    public void setDescripcion(String value) { descripcion.set(value); }
-    public StringProperty descripcionProperty() { return descripcion; }
+    public String getTitulo() {
+        return titulo.get();
+    }
 
-    public boolean isCompletada() { return completada.get(); }
-    public void setCompletada(boolean value) { completada.set(value); }
-    public BooleanProperty completadaProperty() { return completada; }
+    public void setTitulo(String value) {
+        titulo.set(value);
+    }
 
-    public LocalDateTime getFechaCreacion() { return fechaCreacion.get(); }
-    public void setFechaCreacion(LocalDateTime value) { fechaCreacion.set(value); }
-    public ObjectProperty<LocalDateTime> fechaCreacionProperty() { return fechaCreacion; }
+    public StringProperty tituloProperty() {
+        return titulo;
+    }
 
-    public LocalDate getFechaLimite() { return fechaLimite.get(); }
-    public void setFechaLimite(LocalDate value) { fechaLimite.set(value); }
-    public ObjectProperty<LocalDate> fechaLimiteProperty() { return fechaLimite; }
+    public String getDescripcion() {
+        return descripcion.get();
+    }
 
-    public String getUsuarioAsignado() { return usuarioAsignado.get(); }
-    public void setUsuarioAsignado(String value) { usuarioAsignado.set(value); }
-    public StringProperty usuarioAsignadoProperty() { return usuarioAsignado; }
+    public void setDescripcion(String value) {
+        descripcion.set(value);
+    }
 
-    public String getPrioridad() { return prioridad.get(); }
-    public void setPrioridad(String value) { prioridad.set(value.toUpperCase()); }
-    public StringProperty prioridadProperty() { return prioridad; }
+    public StringProperty descripcionProperty() {
+        return descripcion;
+    }
 
-    public String getEtiquetas() { return etiquetas.get(); }
-    public void setEtiquetas(String value) { etiquetas.set(value); }
-    public StringProperty etiquetasProperty() { return etiquetas; }
+    public boolean isCompletada() {
+        return completada.get();
+    }
+
+    public void setCompletada(boolean value) {
+        completada.set(value);
+    }
+
+    public BooleanProperty completadaProperty() {
+        return completada;
+    }
+
+    public LocalDateTime getFechaCreacion() {
+        return fechaCreacion.get();
+    }
+
+    public void setFechaCreacion(LocalDateTime value) {
+        fechaCreacion.set(value);
+    }
+
+    public ObjectProperty<LocalDateTime> fechaCreacionProperty() {
+        return fechaCreacion;
+    }
+
+    public LocalDate getFechaLimite() {
+        return fechaLimite.get();
+    }
+
+    public void setFechaLimite(LocalDate value) {
+        fechaLimite.set(value);
+    }
+
+    public ObjectProperty<LocalDate> fechaLimiteProperty() {
+        return fechaLimite;
+    }
+
+    public String getUsuarioAsignado() {
+        return usuarioAsignado.get();
+    }
+
+    public void setUsuarioAsignado(String value) {
+        usuarioAsignado.set(value);
+    }
+
+    public StringProperty usuarioAsignadoProperty() {
+        return usuarioAsignado;
+    }
+
+    public String getPrioridad() {
+        return prioridad.get();
+    }
+
+    public void setPrioridad(String value) {
+        prioridad.set(value.toUpperCase());
+    }
+
+    public StringProperty prioridadProperty() {
+        return prioridad;
+    }
+
+    public String getEtiquetas() {
+        return etiquetas.get();
+    }
+
+    public void setEtiquetas(String value) {
+        etiquetas.set(value);
+    }
+
+    public StringProperty etiquetasProperty() {
+        return etiquetas;
+    }
 
     // Métodos de presentación
     public String getFechaLimiteFormatted() {
-        if (getFechaLimite() == null) return "";
+        if (getFechaLimite() == null) {
+            return "";
+        }
         return getFechaLimite().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
-
 
     // Serialización
     @Override
     public String toString() {
         DateTimeFormatter fmtDateTime = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         DateTimeFormatter fmtDate = DateTimeFormatter.ISO_LOCAL_DATE;
-        
+
         String creacionStr = (getFechaCreacion() != null) ? getFechaCreacion().format(fmtDateTime) : "";
         String limiteStr = (getFechaLimite() != null) ? getFechaLimite().format(fmtDate) : "";
-        
+
         return String.join(";",
-            safe(getId()),
-            safe(getTitulo()),
-            safe(getDescripcion()),
-            String.valueOf(isCompletada()),
-            creacionStr,
-            limiteStr,
-            safe(getUsuarioAsignado()),
-            safe(getPrioridad()),
-            safe(getEtiquetas())
+                safe(getId()),
+                safe(getTitulo()),
+                safe(getDescripcion()),
+                String.valueOf(isCompletada()),
+                creacionStr,
+                limiteStr,
+                safe(getUsuarioAsignado()),
+                safe(getPrioridad()),
+                safe(getEtiquetas())
         );
     }
 
@@ -119,22 +186,22 @@ public class Task {
             String[] p = linea.split(";", -1);
             DateTimeFormatter fmtDateTime = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
             DateTimeFormatter fmtDate = DateTimeFormatter.ISO_LOCAL_DATE;
-            
-            LocalDateTime fCrea = (p.length > 4 && !p[4].isEmpty()) 
-                ? LocalDateTime.parse(p[4], fmtDateTime) : LocalDateTime.now();
-            LocalDate fLim = (p.length > 5 && !p[5].isEmpty()) 
-                ? LocalDate.parse(p[5], fmtDate) : null;
+
+            LocalDateTime fCrea = (p.length > 4 && !p[4].isEmpty())
+                    ? LocalDateTime.parse(p[4], fmtDateTime) : LocalDateTime.now();
+            LocalDate fLim = (p.length > 5 && !p[5].isEmpty())
+                    ? LocalDate.parse(p[5], fmtDate) : null;
 
             return new Task(
-                p.length > 0 ? p[0] : UUID.randomUUID().toString(),
-                p.length > 1 ? p[1] : "",
-                p.length > 2 ? p[2] : "",
-                p.length > 3 && Boolean.parseBoolean(p[3]),
-                fCrea,
-                fLim,
-                p.length > 6 ? p[6] : null,
-                p.length > 7 ? p[7] : "OPCIONAL",
-                p.length > 8 ? p[8] : ""
+                    p.length > 0 ? p[0] : UUID.randomUUID().toString(),
+                    p.length > 1 ? p[1] : "",
+                    p.length > 2 ? p[2] : "",
+                    p.length > 3 && Boolean.parseBoolean(p[3]),
+                    fCrea,
+                    fLim,
+                    p.length > 6 ? p[6] : null,
+                    p.length > 7 ? p[7] : "OPCIONAL",
+                    p.length > 8 ? p[8] : ""
             );
         } catch (Exception e) {
             System.err.println("Error al parsear tarea: " + e.getMessage());

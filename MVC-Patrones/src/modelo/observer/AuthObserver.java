@@ -7,10 +7,14 @@ package modelo.observer;
 import modelo.entity.User;
 
 /**
- * Observer para eventos de autenticación
+ *
+ * @author samue
  */
 public interface AuthObserver {
+
     void onLoginSuccess(User user);
+
     void onRegisterSuccess(User user);
+
     void onLogout(User user);
 }

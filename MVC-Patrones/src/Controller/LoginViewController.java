@@ -4,10 +4,8 @@
  */
 package Controller;
 
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -20,46 +18,49 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import Controller.NavigationManager;
+
 import modelo.entity.User;
 import modelo.exception.AuthenticationException;
 import modelo.observer.AuthSubject;
 import modelo.service.UserService;
 
 /**
- * Controlador para la vista de inicio de sesión (LoginView.fxml).
- * 
- * Gestiona la autenticación del usuario y la navegación hacia la ventana principal o de registro.
- * Implementa la lógica de interacción entre la vista (JavaFX) y los servicios de autenticación del modelo.
+ *
+ * @author BENJAMIN
  */
 public class LoginViewController {
 
-    /** Campo de texto para el nombre de usuario. */
-    @FXML private TextField usernameField;
+    @FXML
+    private TextField usernameField;
 
-    /** Campo de texto para la contraseña del usuario. */
-    @FXML private PasswordField passwordField;
+    @FXML
+    private PasswordField passwordField;
 
-    /** Botón que ejecuta el proceso de inicio de sesión. */
-    @FXML private Button loginButton;
+    @FXML
+    private Button loginButton;
 
-    /** Etiqueta para mostrar mensajes de error, éxito o información. */
-    @FXML private Label errorLabel;
+    /**
+     * Etiqueta para mostrar mensajes de error, éxito o información.
+     */
+    @FXML
+    private Label errorLabel;
 
-    /** Enlace para redirigir al formulario de registro. */
-    @FXML private Hyperlink registerLink;
+    // Enlace para redirigir al formulario de registro.
+    @FXML
+    private Hyperlink registerLink;
 
-    /** Sujeto que notifica eventos de autenticación a los observadores. */
+    /**
+     * Sujeto que notifica eventos de autenticación a los observadores.
+     */
     private AuthSubject subject;
 
-    /** Gestor encargado de la navegación entre vistas. */
     private NavigationManager navegador;
 
-    /** Servicio encargado de la verificación de credenciales de usuario. */
     private UserService verificacion;
 
     /**
      * Inicializa el controlador y configura los eventos de la interfaz.
-     * 
+     *
      * Se ejecuta automáticamente cuando la vista se carga.
      */
     @FXML
@@ -89,14 +90,6 @@ public class LoginViewController {
         registerLink.setOnAction(e -> handleRegister());
     }
 
-    /**
-     * Maneja el proceso de autenticación del usuario.
-     * 
-     * Valida los campos, autentica el usuario mediante {@link UserService},
-     * y redirige a la vista principal si las credenciales son correctas.
-     *
-     * @throws AuthenticationException si las credenciales no son válidas.
-     */
     @FXML
     private void handleLogin() throws AuthenticationException {
         String username = usernameField.getText().trim();
@@ -115,8 +108,8 @@ public class LoginViewController {
 
                 subject.notifyLogin(provisional);
 
-                javafx.animation.PauseTransition pause =
-                        new javafx.animation.PauseTransition(Duration.seconds(2));
+                javafx.animation.PauseTransition pause
+                        = new javafx.animation.PauseTransition(Duration.seconds(2));
 
                 pause.setOnFinished(event -> {
                     navegador.navigateTo(loginButton, "/View/MainView.fxml", "/View/css/mainview.css");
@@ -131,17 +124,15 @@ public class LoginViewController {
         }
     }
 
-    /**
-     * Redirige al formulario de registro de usuario.
-     */
+    // Redirige al formulario de registro de usuario.
     @FXML
     private void handleRegister() {
         showInfo("Abriendo formulario de registro...");
-        javafx.animation.PauseTransition pause =
-                new javafx.animation.PauseTransition(Duration.seconds(2));
+        javafx.animation.PauseTransition pause
+                = new javafx.animation.PauseTransition(Duration.seconds(2));
 
-        pause.setOnFinished(event ->
-                navegador.navigateTo(loginButton, "/View/RegisterView.fxml", "/View/css/registerview.css"));
+        pause.setOnFinished(event
+                -> navegador.navigateTo(loginButton, "/View/RegisterView.fxml", "/View/css/registerview.css"));
         pause.play();
     }
 
@@ -167,20 +158,13 @@ public class LoginViewController {
         showMessage();
     }
 
-    /**
-     * Muestra un mensaje informativo en pantalla.
-     *
-     * @param message texto del mensaje a mostrar
-     */
     private void showInfo(String message) {
         errorLabel.setText(message);
         errorLabel.setStyle("-fx-text-fill: #6366f1;");
         showMessage();
     }
 
-    /**
-     * Aplica una animación de aparición gradual (fade-in) al mensaje mostrado.
-     */
+    //Aplica una animación de aparición gradual (fade-in) al mensaje mostrado. 
     private void showMessage() {
         errorLabel.setVisible(true);
         FadeTransition fadeIn = new FadeTransition(Duration.millis(300), errorLabel);

@@ -10,7 +10,8 @@ import java.time.temporal.ChronoUnit;
 import modelo.entity.Task;
 
 /**
- * Factory para crear tareas decoradas según sus propiedades
+ *
+ * @author samue
  */
 public class TaskDecoratorFactory {
 

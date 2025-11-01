@@ -10,10 +10,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import modelo.entity.User;
 
 /**
- * Subject para notificar eventos de autenticación
+ *
+ * @author samue
  */
 public class AuthSubject {
-    
+
     private static AuthSubject instance;
     private final List<AuthObserver> observers;
     private String currentUserId;
@@ -43,7 +44,7 @@ public class AuthSubject {
     public void notifyLogin(User user) {
         this.currentUserId = user.getId();
         this.currentUsername = user.getNombreUsuario();
-        
+
         for (AuthObserver observer : observers) {
             observer.onLoginSuccess(user);
         }
@@ -52,7 +53,7 @@ public class AuthSubject {
     public void notifyRegister(User user) {
         this.currentUserId = user.getId();
         this.currentUsername = user.getNombreUsuario();
-        
+
         for (AuthObserver observer : observers) {
             observer.onRegisterSuccess(user);
         }
@@ -62,7 +63,7 @@ public class AuthSubject {
         String userId = this.currentUserId;
         this.currentUserId = null;
         this.currentUsername = null;
-        
+
         for (AuthObserver observer : observers) {
             observer.onLogout(user);
         }

@@ -5,10 +5,11 @@
 package modelo.decorator;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import modelo.helper.TaskStatusHelper;
 
 /**
- * Decorador para tareas próximas a vencer
+ *
+ * @author samue
  */
 public class ExpiringTaskDecorator extends TaskDecorator {
 
@@ -19,38 +20,20 @@ public class ExpiringTaskDecorator extends TaskDecorator {
     @Override
     public String getDisplayText() {
         LocalDate fechaLimite = getTask().getFechaLimite();
-        if (fechaLimite == null) {
-            return wrappedTask.getDisplayText();
-        }
+        long diasRestantes = TaskStatusHelper.calcularDiasRestantes(fechaLimite);
 
-        long diasRestantes = ChronoUnit.DAYS.between(LocalDate.now(), fechaLimite);
-        
-        if (diasRestantes < 0) {
-            return "⚠️ " + wrappedTask.getDisplayText() + " [VENCIDA]";
-        } else if (diasRestantes == 0) {
-            return "⏰ " + wrappedTask.getDisplayText() + " [HOY]";
-        } else if (diasRestantes <= 3) {
-            return "⏳ " + wrappedTask.getDisplayText() + " (" + diasRestantes + " días)";
-        }
-        
-        return wrappedTask.getDisplayText();
+        String icono = TaskStatusHelper.obtenerIcono(diasRestantes);
+        String etiqueta = TaskStatusHelper.obtenerEtiquetaEstado(diasRestantes);
+
+        return String.format("%s %s %s", icono, wrappedTask.getDisplayText(), etiqueta).trim();
     }
 
     @Override
     public String getStyleClass() {
         LocalDate fechaLimite = getTask().getFechaLimite();
-        if (fechaLimite == null) {
-            return wrappedTask.getStyleClass();
-        }
+        long diasRestantes = TaskStatusHelper.calcularDiasRestantes(fechaLimite);
+        String claseExtra = TaskStatusHelper.obtenerClaseCSS(diasRestantes);
 
-        long diasRestantes = ChronoUnit.DAYS.between(LocalDate.now(), fechaLimite);
-        
-        if (diasRestantes < 0) {
-            return wrappedTask.getStyleClass() + " task-overdue";
-        } else if (diasRestantes <= 3) {
-            return wrappedTask.getStyleClass() + " task-expiring-soon";
-        }
-        
-        return wrappedTask.getStyleClass();
+        return String.join(" ", wrappedTask.getStyleClass(), claseExtra).trim();
     }
 }
