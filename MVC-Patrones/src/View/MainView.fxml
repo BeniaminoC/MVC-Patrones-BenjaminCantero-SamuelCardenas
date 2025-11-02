@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
-<?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
 
 <VBox xmlns="http://javafx.com/javafx" 
       xmlns:fx="http://javafx.com/fxml"
@@ -25,11 +17,22 @@
     <!-- Contenedor principal con ancho máximo -->
     <VBox styleClass="main-container" spacing="20" alignment="TOP_CENTER">
         
-        <!-- Header -->
-        <VBox alignment="CENTER" spacing="5">
-            <Label text="Mis Tareas" styleClass="title"/>
-            <Label fx:id="statsLabel" text="0 tareas pendientes" styleClass="stats-label"/>
-        </VBox>
+        <!-- Header con título y botón de logout -->
+        <HBox alignment="CENTER" spacing="20">
+            <Region HBox.hgrow="ALWAYS"/>
+            
+            <VBox alignment="CENTER" spacing="5">
+                <Label text="Mis Tareas" styleClass="title"/>
+                <Label fx:id="statsLabel" text="0 tareas pendientes" styleClass="stats-label"/>
+            </VBox>
+            
+            <Region HBox.hgrow="ALWAYS"/>
+            
+            <!-- Botón de Logout con clase CSS -->
+            <Button fx:id="logoutButton" 
+                   text="Cerrar Sesión" 
+                   styleClass="logout-button"/>
+        </HBox>
         
         <!-- Input Card -->
         <HBox styleClass="input-card" spacing="10" alignment="CENTER">

@@ -4,36 +4,69 @@
  */
 package View.dialogs;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.Separator;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 
 import modelo.entity.Task;
-import Controller.util.TaskStyleHelper; // <-- import agregado
+import Controller.util.TaskStyleHelper;
+import Controller.util.TaskUrgencyHelper;
+import Controller.util.TaskUrgencyHelper.UrgencyInfo;
 
 /**
- * {@code DialogDetails} representa un cuadro de diálogo personalizado que muestra los detalles
- * completos de una tarea ({@link Task}) en la aplicación.
+ * Diálogo modal que muestra información detallada de una tarea.
+ * <p>
+ * {@code DialogDetails} extiende {@link javafx.scene.control.Dialog} para
+ * presentar una ventana emergente con todos los detalles de una tarea,
+ * incluyendo su estado, prioridad, descripción, fecha límite y nivel de urgencia.
+ * </p>
+ * 
+ * <p>
+ * El diálogo se construye dinámicamente en función de los datos de la tarea,
+ * mostrando solo las secciones relevantes (por ejemplo, omite la descripción
+ * si está vacía o la fecha límite si no está definida).
+ * </p>
+ * 
+ * <h3>Características visuales:</h3>
+ * <ul>
+ *   <li>Encabezado coloreado según la prioridad de la tarea</li>
+ *   <li>Iconos y etiquetas visuales para estado y urgencia</li>
+ *   <li>Barra de progreso para visualizar tiempo restante</li>
+ *   <li>Diseño responsive con estilos CSS personalizados</li>
+ *   <li>Separadores y espaciado consistente</li>
+ * </ul>
+ * 
+ * <h3>Secciones del diálogo:</h3>
+ * <ol>
+ *   <li><b>Estado:</b> Muestra si la tarea está completada o pendiente</li>
+ *   <li><b>Prioridad:</b> Badge coloreado con el nivel de prioridad</li>
+ *   <li><b>Descripción:</b> Texto descriptivo de la tarea (si existe)</li>
+ *   <li><b>Fecha Límite:</b> Fecha, urgencia y barra de progreso (si existe)</li>
+ *   <li><b>Información adicional:</b> Instrucciones y sugerencias</li>
+ * </ol>
+ * 
+ *
+ * @author BENJAMIN
+ * @see Task
+ * @see TaskStyleHelper
+ * @see TaskUrgencyHelper
  */
 public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
-    /** Tarea asociada cuyos detalles se mostrarán. */
+    /**
+     * Tarea cuyos detalles serán mostrados en el diálogo.
+     */
     private Task task;
 
     /**
-     * Crea una nueva instancia del cuadro de diálogo con los detalles de la tarea.
+     * Constructor que inicializa el diálogo con una tarea específica.
+     * <p>
+     * Automáticamente configura y construye todos los componentes visuales
+     * del diálogo basándose en los datos de la tarea proporcionada.
+     * </p>
      *
-     * @param task objeto {@link Task} del cual se mostrarán los detalles
+     * @param task tarea de la cual se mostrarán los detalles, no debe ser {@code null}
      */
     public DialogDetails(Task task) {
         this.task = task;
@@ -41,7 +74,17 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
     }
 
     /**
-     * Configura el diálogo principal, aplicando título, cabecera, contenido y estilos.
+     * Inicializa y configura los componentes principales del diálogo.
+     * <p>
+     * Este método establece el título, estiliza el encabezado con el color
+     * de prioridad de la tarea, construye el contenido y configura el botón
+     * de cierre.
+     * </p>
+     * 
+     * <p>
+     * La estilización del encabezado se realiza en {@link javafx.application.Platform#runLater}
+     * para asegurar que los nodos estén completamente renderizados antes de aplicar estilos.
+     * </p>
      */
     private void initializeDialog() {
         setTitle("Detalles de la Tarea");
@@ -62,7 +105,6 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
         VBox content = createContent();
         getDialogPane().setContent(content);
-
         getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 
         javafx.application.Platform.runLater(() -> {
@@ -74,9 +116,14 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
     }
 
     /**
-     * Construye y organiza todas las secciones visuales del contenido del diálogo.
+     * Crea el contenedor principal con todas las secciones del diálogo.
+     * <p>
+     * Construye dinámicamente las secciones basándose en los datos disponibles
+     * de la tarea. Las secciones opcionales (descripción y fecha límite) solo
+     * se incluyen si tienen información válida.
+     * </p>
      *
-     * @return contenedor principal del contenido
+     * @return contenedor {@link VBox} con todas las secciones del diálogo
      */
     private VBox createContent() {
         VBox content = new VBox(20);
@@ -105,9 +152,13 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
     }
 
     /**
-     * Crea la sección que muestra el estado actual de la tarea.
+     * Crea la sección que muestra el estado de la tarea.
+     * <p>
+     * Incluye un icono visual (✓ para completada, ○ para pendiente) y
+     * texto coloreado según el estado.
+     * </p>
      *
-     * @return contenedor con el estado y su etiqueta
+     * @return contenedor {@link VBox} con la información del estado
      */
     private VBox createStatusSection() {
         VBox section = new VBox(8);
@@ -132,8 +183,12 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
     /**
      * Crea la sección que muestra la prioridad de la tarea.
+     * <p>
+     * La prioridad se presenta como un badge coloreado usando el color
+     * correspondiente obtenido de {@link TaskStyleHelper#getPriorityColor(Task)}.
+     * </p>
      *
-     * @return contenedor con la prioridad
+     * @return contenedor {@link VBox} con el badge de prioridad
      */
     private VBox createPrioritySection() {
         VBox section = new VBox(8);
@@ -143,12 +198,12 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
         Label priorityBadge = new Label(task.getPrioridad());
         priorityBadge.setStyle(
-            "-fx-background-color: " + TaskStyleHelper.getPriorityColor(task) + "; " +
-            "-fx-text-fill: white; " +
-            "-fx-padding: 8 16; " +
-            "-fx-background-radius: 20; " +
-            "-fx-font-size: 14px; " +
-            "-fx-font-weight: bold;"
+                "-fx-background-color: " + TaskStyleHelper.getPriorityColor(task) + "; "
+                + "-fx-text-fill: white; "
+                + "-fx-padding: 8 16; "
+                + "-fx-background-radius: 20; "
+                + "-fx-font-size: 14px; "
+                + "-fx-font-weight: bold;"
         );
 
         section.getChildren().addAll(titleLabel, priorityBadge);
@@ -156,9 +211,13 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
     }
 
     /**
-     * Crea la sección que muestra la descripción de la tarea.
+     * Crea la sección que muestra la descripción detallada de la tarea.
+     * <p>
+     * El texto de la descripción se presenta con ajuste automático de línea
+     * en un contenedor con fondo gris claro para mejor legibilidad.
+     * </p>
      *
-     * @return contenedor con la descripción
+     * @return contenedor {@link VBox} con la descripción de la tarea
      */
     private VBox createDescriptionSection() {
         VBox section = new VBox(8);
@@ -169,11 +228,11 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
         Label descContent = new Label(task.getDescripcion());
         descContent.setWrapText(true);
         descContent.setStyle(
-            "-fx-font-size: 14px; " +
-            "-fx-text-fill: #374151; " +
-            "-fx-padding: 12; " +
-            "-fx-background-color: #f9fafb; " +
-            "-fx-background-radius: 8;"
+                "-fx-font-size: 14px; "
+                + "-fx-text-fill: #374151; "
+                + "-fx-padding: 12; "
+                + "-fx-background-color: #f9fafb; "
+                + "-fx-background-radius: 8;"
         );
 
         section.getChildren().addAll(titleLabel, descContent);
@@ -181,9 +240,22 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
     }
 
     /**
-     * Crea la sección que muestra la fecha límite y el progreso según la urgencia.
+     * Crea la sección que muestra la fecha límite y su nivel de urgencia.
+     * <p>
+     * Incluye:
+     * <ul>
+     *   <li>Fecha límite formateada con icono de calendario</li>
+     *   <li>Etiqueta de urgencia con texto descriptivo y color</li>
+     *   <li>Barra de progreso visual indicando tiempo restante</li>
+     * </ul>
+     * </p>
+     * 
+     * <p>
+     * La información de urgencia se obtiene mediante
+     * {@link TaskUrgencyHelper#getUrgencyInfo(LocalDate)}.
+     * </p>
      *
-     * @return contenedor con la información de fecha límite
+     * @return contenedor {@link VBox} con la información de fecha límite y urgencia
      */
     private VBox createDueDateSection() {
         VBox section = new VBox(8);
@@ -196,66 +268,32 @@ public class DialogDetails extends javafx.scene.control.Dialog<Task> {
 
         Label dateLabel = new Label("📅 " + task.getFechaLimiteFormatted());
         dateLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1f2937;");
-
-        long daysUntil = ChronoUnit.DAYS.between(LocalDate.now(), task.getFechaLimite());
-        String daysText;
-        String urgencyColor;
-
-        if (daysUntil < 0) {
-            daysText = "⚠️ Vencida hace " + Math.abs(daysUntil) + " día" + (Math.abs(daysUntil) == 1 ? "" : "s");
-            urgencyColor = "#dc2626";
-        } else if (daysUntil == 0) {
-            daysText = "⏰ Vence HOY";
-            urgencyColor = "#f59e0b";
-        } else if (daysUntil == 1) {
-            daysText = "⏰ Vence MAÑANA";
-            urgencyColor = "#f59e0b";
-        } else if (daysUntil <= 3) {
-            daysText = "⏳ Faltan " + daysUntil + " días";
-            urgencyColor = "#f59e0b";
-        } else if (daysUntil <= 7) {
-            daysText = "📊 Faltan " + daysUntil + " días";
-            urgencyColor = "#3b82f6";
-        } else {
-            daysText = "✓ Faltan " + daysUntil + " días";
-            urgencyColor = "#10b981";
-        }
-
-        Label urgencyLabel = new Label(daysText);
-        urgencyLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: " + urgencyColor + "; -fx-font-weight: bold;");
-
+        UrgencyInfo urgency = TaskUrgencyHelper.getUrgencyInfo(task.getFechaLimite());
+        Label urgencyLabel = new Label(urgency.getFullText());
+        urgencyLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: " + urgency.getColor() + "; -fx-font-weight: bold;");
         ProgressBar progressBar = new ProgressBar();
         progressBar.setPrefWidth(350);
         progressBar.setPrefHeight(8);
-
-        double progress;
-        if (daysUntil < 0) {
-            progress = 1.0;
-        } else if (daysUntil <= 7) {
-            progress = 1.0 - (daysUntil / 7.0);
-        } else {
-            progress = 0.0;
-        }
-
-        progressBar.setProgress(progress);
-        progressBar.setStyle("-fx-accent: " + urgencyColor + ";");
-
+        progressBar.setProgress(urgency.getProgress());
+        progressBar.setStyle("-fx-accent: " + urgency.getColor() + ";");
         dateBox.getChildren().addAll(dateLabel, urgencyLabel, progressBar);
         section.getChildren().addAll(titleLabel, dateBox);
         return section;
     }
 
     /**
-     * Crea una sección con información adicional o consejos para el usuario.
+     * Crea la sección de información adicional con instrucciones para el usuario.
+     * <p>
+     * Muestra un mensaje informativo sobre cómo marcar la tarea como completada
+     * utilizando el checkbox en la vista principal.
+     * </p>
      *
-     * @return contenedor con mensaje adicional
+     * @return contenedor {@link VBox} con el mensaje informativo
      */
     private VBox createAdditionalInfo() {
         VBox section = new VBox(5);
-
         Label infoLabel = new Label("💡 Haz clic en el checkbox para marcar como completada");
         infoLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #9ca3af; -fx-font-style: italic;");
-
         section.getChildren().add(infoLabel);
         return section;
     }

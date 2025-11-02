@@ -5,7 +5,6 @@
 package Controller;
 
 import java.io.IOException;
-
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,33 +12,49 @@ import javafx.scene.Scene;
 import javafx.scene.Node;
 
 /**
- * {@code NavigationManager} gestiona la navegación entre vistas dentro de la aplicación JavaFX.
+ * {@code NavigationManager} gestiona la navegación entre diferentes vistas
+ * (escenas) dentro de la aplicación JavaFX.
+ * <p>
+ * Implementa el patrón de diseño Singleton para asegurar una única instancia
+ * global, responsable de cargar archivos FXML, aplicar estilos CSS y mantener
+ * la referencia del {@code Stage} principal.
+ * </p>
  *
- * Implementa el patrón Singletonpara garantizar una única instancia
- * responsable de manejar los cambios de escenas y aplicar los estilos CSS correspondientes.
+ * <p>
+ * <b>Responsabilidades principales:</b></p>
+ * <ul>
+ * <li>Centralizar la lógica de cambio de escenas.</li>
+ * <li>Permitir la carga dinámica de vistas FXML con sus estilos asociados.</li>
+ * <li>Administrar el {@code Stage} principal de la aplicación.</li>
+ * </ul>
  *
- * Se encarga de:
- * 
- *   Cargar nuevas vistas (FXML) en la escena actual.
- *   Aplicar hojas de estilo (CSS) asociadas a cada vista.
- *   Conservar el estado del {@link Stage} principal.
-
+ * @author BENJAMIN
  */
 public class NavigationManager {
 
-    /** Instancia única del gestor de navegación (Singleton). */
+    /**
+     * Instancia única del gestor de navegación (patrón Singleton).
+     */
     private static NavigationManager instance;
 
-    /** Ventana principal de la aplicación. */
+    /**
+     * Ventana principal de la aplicación (Stage raíz).
+     */
     private Stage primaryStage;
 
-    /** Constructor privado para evitar instanciación directa. */
-    private NavigationManager() {}
+    /**
+     * Constructor privado para evitar instanciación directa.
+     * <p>
+     * El acceso debe realizarse mediante {@link #getInstance()}.
+     * </p>
+     */
+    private NavigationManager() {
+    }
 
     /**
-     * Retorna la instancia única del {@code NavigationManager}.
+     * Obtiene la instancia única del {@code NavigationManager}.
      *
-     * @return instancia única de NavigationManager
+     * @return la instancia única del gestor de navegación
      */
     public static synchronized NavigationManager getInstance() {
         if (instance == null) {
@@ -49,29 +64,28 @@ public class NavigationManager {
     }
 
     /**
-     * Asigna la ventana principal (Stage) de la aplicación.
+     * Asigna el {@code Stage} principal de la aplicación.
      *
-     * Debe llamarse una vez al iniciar la aplicación, normalmente desde la clase principal
-     * que extiende {@link javafx.application.Application}.
-     *
-     * @param stage ventana principal de la aplicación
+     * @param stage la ventana principal de la aplicación
      */
     public void setPrimaryStage(Stage stage) {
         this.primaryStage = stage;
     }
 
     /**
-     * Cambia la vista actual por una nueva, cargando un archivo FXML y aplicando un CSS.
+     * Cambia la vista actual dentro de una escena existente.
+     * <p>
+     * Reemplaza el nodo raíz del {@code Scene} asociado al nodo actual,
+     * cargando un nuevo archivo FXML. También permite aplicar una hoja de
+     * estilo CSS opcional.
+     * </p>
      *
-     * Utiliza el nodo actual (por ejemplo, un botón o campo de texto) para obtener la escena
-     * activa y reemplazar su raíz por la nueva vista cargada.
-     *
-     * @param <T> tipo del controlador asociado a la vista cargada
-     * @param node cualquier nodo perteneciente a la escena actual
-     * @param fxmlPath ruta del archivo FXML de la nueva vista
-     * @param cssPath ruta del archivo CSS a aplicar (puede ser {@code null} o vacío)
-     * @return el controlador de la vista cargada
-     * @throws RuntimeException si ocurre un error al cargar el FXML o aplicar el CSS
+     * @param <T> tipo del controlador asociado al nuevo FXML
+     * @param node un nodo perteneciente a la escena actual
+     * @param fxmlPath ruta relativa del archivo FXML a cargar
+     * @param cssPath ruta relativa del archivo CSS a aplicar (puede ser nula)
+     * @return el controlador asociado a la nueva vista cargada
+     * @throws RuntimeException si ocurre un error al cargar el FXML
      */
     public <T> T navigateTo(Node node, String fxmlPath, String cssPath) {
         try {
@@ -84,7 +98,7 @@ public class NavigationManager {
             scene.getStylesheets().clear();
             if (cssPath != null && !cssPath.isEmpty()) {
                 scene.getStylesheets().add(
-                    getClass().getResource(cssPath).toExternalForm()
+                        getClass().getResource(cssPath).toExternalForm()
                 );
             }
 
@@ -99,13 +113,15 @@ public class NavigationManager {
     }
 
     /**
-     * Inicializa la primera vista de la aplicación al iniciar el programa.
+     * Inicia la navegación desde el punto de entrada principal de la
+     * aplicación.
+     * <p>
+     * Carga la vista inicial, aplica el CSS indicado y muestra la ventana
+     * principal maximizada con el título "TaskLink - Gestión de Tareas".
+     * </p>
      *
-     * Se utiliza al arrancar la aplicación para cargar la vista inicial
-     * en el {@link Stage} principal configurado previamente.
-     *
-     * @param fxmlPath ruta del archivo FXML de la vista inicial
-     * @param cssPath ruta del archivo CSS a aplicar (puede ser {@code null} o vacío)
+     * @param fxmlPath ruta del archivo FXML inicial
+     * @param cssPath ruta del archivo CSS inicial (puede ser nula)
      * @throws RuntimeException si ocurre un error al cargar la vista inicial
      */
     public void navigateFromStart(String fxmlPath, String cssPath) {
@@ -117,7 +133,7 @@ public class NavigationManager {
 
             if (cssPath != null && !cssPath.isEmpty()) {
                 scene.getStylesheets().add(
-                    getClass().getResource(cssPath).toExternalForm()
+                        getClass().getResource(cssPath).toExternalForm()
                 );
             }
 

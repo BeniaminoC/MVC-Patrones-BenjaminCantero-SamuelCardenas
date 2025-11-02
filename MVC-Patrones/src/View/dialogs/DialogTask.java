@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -23,35 +24,96 @@ import javafx.util.StringConverter;
 
 import modelo.entity.Task;
 
-
 /**
- * Clase que representa un cuadro de diálogo personalizado para la creación de tareas.Extiende {@link javafx.scene.control.Dialog} y permite al usuario ingresar el título,
- descripción, fecha límite y prioridad de una nueva tarea. 
- * Incluye validaciones, estilos personalizados y opciones rápidas para asignar
- fechas comunes como “Hoy”, “Mañana” o “Próxima semana”.
- 
- El diálogo devuelve un objeto {@link Task} configurado con los datos
- * introducidos por el usuario al confirmar la creación.
+ * Diálogo modal para la creación de nuevas tareas.
+ * <p>
+ * {@code DialogTask} extiende {@link javafx.scene.control.Dialog} para
+ * proporcionar una interfaz completa de formulario que permite al usuario
+ * crear tareas especificando título, descripción, fecha límite y prioridad.
+ * </p>
  * 
+ * <p>
+ * El diálogo incluye validación en tiempo real, botones rápidos para
+ * selección de fechas comunes y estilos visuales diferenciados según
+ * la prioridad seleccionada.
+ * </p>
+ * 
+ * <h3>Características principales:</h3>
+ * <ul>
+ *   <li><b>Validación automática:</b> El botón "Crear" se habilita solo si hay título</li>
+ *   <li><b>Botones rápidos de fecha:</b> Hoy, Mañana, Próxima semana</li>
+ *   <li><b>Selección de prioridad:</b> Urgente, Importante u Opcional (por defecto)</li>
+ *   <li><b>Formato de fecha personalizado:</b> dd/MM/yyyy</li>
+ *   <li><b>Campos opcionales:</b> Descripción y fecha límite no son obligatorios</li>
+ * </ul>
+ * 
+ * <h3>Campos del formulario:</h3>
+ * <ol>
+ *   <li><b>Título:</b> Campo obligatorio para el nombre de la tarea</li>
+ *   <li><b>Descripción:</b> Área de texto opcional multilinea</li>
+ *   <li><b>Fecha Límite:</b> DatePicker opcional con botones de acceso rápido</li>
+ *   <li><b>Prioridad:</b> Grupo de radio buttons (URGENTE/IMPORTANTE/OPCIONAL)</li>
+ * </ol>
+ * 
+ * 
+ *
  * @author BENJAMIN
+ * @see Task
  */
 public class DialogTask extends javafx.scene.control.Dialog<Task> {
 
-    /** Campo de texto para ingresar el título de la tarea. */
+    /**
+     * Campo de texto para ingresar el título de la tarea.
+     * <p>
+     * Este campo es obligatorio y controla la habilitación del botón "Crear".
+     * </p>
+     */
     private TextField titleField;
 
-    /** Área de texto para ingresar la descripción de la tarea. */
+    /**
+     * Área de texto para ingresar la descripción detallada de la tarea.
+     * <p>
+     * Este campo es opcional y permite texto multilinea con ajuste automático.
+     * </p>
+     */
     private TextArea descriptionField;
 
-    /** Selector de fecha para establecer la fecha límite. */
+    /**
+     * Selector de fecha para establecer la fecha límite de la tarea.
+     * <p>
+     * Este campo es opcional y utiliza formato dd/MM/yyyy. Incluye botones
+     * de acceso rápido para fechas comunes.
+     * </p>
+     */
     private DatePicker datePicker;
 
-    /** Valor seleccionado de prioridad (URGENTE, IMPORTANTE u OPCIONAL). */
+    /**
+     * Prioridad seleccionada para la tarea.
+     * <p>
+     * Valores posibles: "URGENTE", "IMPORTANTE", "OPCIONAL".
+     * Por defecto se establece en "OPCIONAL".
+     * </p>
+     */
     private String selectedPriority = "OPCIONAL";
 
     /**
-     * Constructor que inicializa y configura todos los componentes visuales del diálogo.
-     * Define los campos de entrada, botones, estilos CSS y lógica para la creación de una nueva tarea.
+     * Constructor que inicializa y configura el diálogo de creación de tareas.
+     * <p>
+     * Construye toda la interfaz del formulario incluyendo:
+     * <ul>
+     *   <li>Campo de título con validación en tiempo real</li>
+     *   <li>Área de descripción opcional</li>
+     *   <li>DatePicker con formato personalizado y botones rápidos</li>
+     *   <li>Grupo de radio buttons para selección de prioridad</li>
+     *   <li>Botones de acción (Crear y Cancelar) con estilos personalizados</li>
+     * </ul>
+     * </p>
+     * 
+     * <p>
+     * El diálogo se configura con validación que deshabilita el botón "Crear"
+     * hasta que se ingrese un título válido. Al aceptar, retorna un nuevo
+     * objeto {@link Task} con los valores ingresados.
+     * </p>
      */
     public DialogTask() {
         setTitle("Nueva Tarea");
@@ -205,4 +267,3 @@ public class DialogTask extends javafx.scene.control.Dialog<Task> {
         javafx.application.Platform.runLater(() -> titleField.requestFocus());
     }
 }
-
