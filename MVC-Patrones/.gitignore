@@ -1,0 +1,18 @@
+# Ignorar carpetas generadas automáticamente por NetBeans
+/build/
+/dist/
+/nbproject/private/
+
+# Ignorar archivos compilados de Java
+*.class
+
+# Ignorar logs y temporales
+*.log
+*.tmp
+
+# Ignorar configuraciones del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Ignorar tu archivo de persistencia (solo si no quieres subirlo)
+data/tasks.txt
