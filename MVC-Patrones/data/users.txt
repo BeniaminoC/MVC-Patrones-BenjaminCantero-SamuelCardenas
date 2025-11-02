@@ -2,3 +2,5 @@
 253e79fd-8e38-46df-a1e7-a18baed9b479;samHelios;samuel@gmail.com;3RMKhJ17KeVUGwXS9/hqSs1PHsWYwclDh4P1a8Tw/4A=;2025-11-01T07:36:30.3960501
 077f0fd6-ef50-4352-86af-c54fea079495;sampe;123@hotmail.com;+/s4bv6mfoFvLdoKjJSpjrIDdXrrs/VfGDdVoZLURGc=;2025-11-01T11:35:33.5282485
 3fc3063c-a87b-47a5-b421-3f10e12f1361;tester;tester@gmail.com;+/s4bv6mfoFvLdoKjJSpjrIDdXrrs/VfGDdVoZLURGc=;2025-11-01T14:22:14.3647417
+dc763a4f-9cb4-4526-94a1-f133299e7443;pedrito;pedrito@gmail.com;KokeUdGwAjhtglObLi60M1OfWeuIhcLG/z/szVq6tV4=;2025-11-01T15:54:11.2433185
+c2d2bc6d-b39d-4c5b-aa84-b4c33f19a80f;usuarioP;ejemplo@123gmail.com;+/s4bv6mfoFvLdoKjJSpjrIDdXrrs/VfGDdVoZLURGc=;2025-11-01T17:53:57.0418346
